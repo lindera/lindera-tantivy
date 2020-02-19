@@ -1,0 +1,17 @@
+[package]
+name = "tantivy-lindera"
+version = "0.1.0"
+authors = ["Minoru Osuka <minoru.osuka@gmail.com>"]
+edition = "2018"
+description = "A Japanese tokenizer for Tantivy, based on Lindera."
+documentation = "https://docs.rs/tantivy-lindera"
+homepage = "https://github.com/lindera-morphology/tantivy-lindera"
+repository = "https://github.com/lindera-morphology/tantivy-lindera"
+readme = "README.md"
+keywords = ["japanese", "tokenizer", "tantivy", "lindera"]
+categories = ["text-processing"]
+license = "MIT"
+
+[dependencies]
+lindera = "0.3.1"
+tantivy = { git = "https://github.com/tantivy-search/tantivy", branch = "master" }
