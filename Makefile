@@ -1,3 +1,5 @@
+.DEFAULT_GOAL := build
+
 clean:
 	cargo clean
 
