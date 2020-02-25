@@ -2,6 +2,67 @@ use crate::stream::LinderaTokenStream;
 use lindera::tokenizer::Tokenizer as LTokenizer;
 use tantivy::tokenizer::{BoxTokenStream, Tokenizer};
 
+/// Tokenize text with the specified mode and dictionary.
+///
+/// Example: `すもももももももものうち` would be tokenized as (mode: "normal", dict: "")
+///
+/// | Term     | すもも | も     | もも   | も    | もも   | の    | うち   |
+/// |----------|--------|--------|--------|--------|--------|--------|--------|
+/// | Position | 0      | 1      | 2      | 3      | 4      | 5      | 6      |
+/// | Offsets  | 0,9    | 9,12   | 12,18  | 18,21  | 21,27  | 27,30  | 30,36  |
+///
+/// # Example
+///
+/// ```rust
+/// use tantivy_lindera::tokenizer::*;
+/// use tantivy::tokenizer::Tokenizer;
+///
+/// let tokenizer = LinderaTokenizer::new("normal", "");
+/// let mut stream = tokenizer.token_stream("すもももももももものうち");
+/// {
+///     let token = stream.next().unwrap();
+///     assert_eq!(token.text, "すもも");
+///     assert_eq!(token.offset_from, 0);
+///     assert_eq!(token.offset_to, 9);
+/// }
+/// {
+///   let token = stream.next().unwrap();
+///     assert_eq!(token.text, "も");
+///     assert_eq!(token.offset_from, 9);
+///     assert_eq!(token.offset_to, 12);
+/// }
+/// {
+///   let token = stream.next().unwrap();
+///     assert_eq!(token.text, "もも");
+///     assert_eq!(token.offset_from, 12);
+///     assert_eq!(token.offset_to, 18);
+/// }
+/// {
+///   let token = stream.next().unwrap();
+///     assert_eq!(token.text, "も");
+///     assert_eq!(token.offset_from, 18);
+///     assert_eq!(token.offset_to, 21);
+/// }
+/// {
+///   let token = stream.next().unwrap();
+///     assert_eq!(token.text, "もも");
+///     assert_eq!(token.offset_from, 21);
+///     assert_eq!(token.offset_to, 27);
+/// }
+/// {
+///   let token = stream.next().unwrap();
+///     assert_eq!(token.text, "の");
+///     assert_eq!(token.offset_from, 27);
+///     assert_eq!(token.offset_to, 30);
+/// }
+/// {
+///   let token = stream.next().unwrap();
+///   assert_eq!(token.text, "うち");
+///   assert_eq!(token.offset_from, 30);
+///   assert_eq!(token.offset_to, 36);
+/// }
+/// assert!(stream.next().is_none());
+/// ```
 #[derive(Clone)]
 pub struct LinderaTokenizer {
     pub tokenizer: LTokenizer,
