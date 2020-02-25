@@ -8,9 +8,9 @@ pub struct LinderaTokenizer {
 }
 
 impl LinderaTokenizer {
-    pub fn new() -> LinderaTokenizer {
+    pub fn new(mode: &str, dict: &str) -> LinderaTokenizer {
         LinderaTokenizer {
-            tokenizer: LTokenizer::default_normal(),
+            tokenizer: LTokenizer::new(mode, dict),
         }
     }
 }
@@ -42,7 +42,9 @@ mod tests {
 
     #[test]
     fn test_tokenizer_equal() {
-        let tokens = test_helper(LinderaTokenizer::new().token_stream("すもももももももものうち"));
+        let tokens = test_helper(
+            LinderaTokenizer::new("normal", "").token_stream("すもももももももものうち"),
+        );
         assert_eq!(tokens.len(), 7);
         {
             let token = &tokens[0];
