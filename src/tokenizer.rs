@@ -14,7 +14,7 @@ use tantivy::tokenizer::{BoxTokenStream, Tokenizer};
 /// # Example
 ///
 /// ```rust
-/// use tantivy_lindera::tokenizer::*;
+/// use lindera_tantivy::tokenizer::*;
 /// use tantivy::tokenizer::Tokenizer;
 ///
 /// let tokenizer = LinderaTokenizer::new("normal", "");

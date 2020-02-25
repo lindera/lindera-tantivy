@@ -20,7 +20,7 @@ The following products are required to build:
 ### Basic example
 
 ```rust
-use tantivy_lindera::tokenizer::*;
+use lindera_tantivy::tokenizer::*;
 use tantivy::tokenizer::Tokenizer;
 
 fn main() -> std::io::Result<()> {
@@ -77,4 +77,4 @@ fn main() -> std::io::Result<()> {
 ## API reference
 
 The API reference is available. Please see following URL:
-- <a href="https://docs.rs/tantivy-lindera" target="_blank">tantivy-lindera</a>
+- <a href="https://docs.rs/lindera-tantivy" target="_blank">lindera-tantivy</a>
