@@ -1,43 +1,6 @@
-use lindera::tokenizer::{Token as LToken, Tokenizer as LTokenizer};
-use tantivy::tokenizer::{BoxTokenStream, Token, TokenStream, Tokenizer};
-
-pub struct LinderaTokenStream<'a> {
-    result: Vec<LToken<'a>>,
-    index: usize,
-    offset_from: usize,
-    token: Token,
-}
-
-impl<'a> TokenStream for LinderaTokenStream<'a> {
-    fn advance(&mut self) -> bool {
-        if self.index < self.result.len() {
-            let token = self.result.get(self.index).unwrap();
-
-            self.token = Token {
-                offset_from: self.offset_from,
-                offset_to: self.offset_from + token.text.len(),
-                position: self.index,
-                text: token.text.to_string(),
-                position_length: self.result.len(),
-            };
-
-            self.offset_from += token.text.len();
-            self.index += 1;
-
-            true
-        } else {
-            false
-        }
-    }
-
-    fn token(&self) -> &Token {
-        &self.token
-    }
-
-    fn token_mut(&mut self) -> &mut Token {
-        &mut self.token
-    }
-}
+use crate::stream::LinderaTokenStream;
+use lindera::tokenizer::Tokenizer as LTokenizer;
+use tantivy::tokenizer::{BoxTokenStream, Tokenizer};
 
 #[derive(Clone)]
 pub struct LinderaTokenizer {
