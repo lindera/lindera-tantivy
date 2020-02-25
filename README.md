@@ -1,8 +1,8 @@
-# Lindera Core
+# Lindera tokenizer for Tantivy
 
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Join the chat at https://gitter.im/lindera-morphology/lindera](https://badges.gitter.im/lindera-morphology/lindera.svg)](https://gitter.im/lindera-morphology/lindera?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
 
-A Japanese tokenizer for [Tantivy](https://github.com/tantivy-search/tantivy), based on [Lindera](https://github.com/lindera-morphology/lindera).
+A Tokenizer for [Tantivy](https://github.com/tantivy-search/tantivy), based on [Lindera](https://github.com/lindera-morphology/lindera).
 
 ## Build
 
