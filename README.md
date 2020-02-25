@@ -15,6 +15,65 @@ The following products are required to build:
 % make build
 ```
 
+## Usage
+
+### Basic example
+
+```rust
+use tantivy_lindera::tokenizer::*;
+use tantivy::tokenizer::Tokenizer;
+
+fn main() -> std::io::Result<()> {
+    let tokenizer = LinderaTokenizer::new("normal", "");
+    let mut stream = tokenizer.token_stream("すもももももももものうち");
+    {
+        let token = stream.next().unwrap();
+        assert_eq!(token.text, "すもも");
+        assert_eq!(token.offset_from, 0);
+        assert_eq!(token.offset_to, 9);
+    }
+    {
+        let token = stream.next().unwrap();
+        assert_eq!(token.text, "も");
+        assert_eq!(token.offset_from, 9);
+        assert_eq!(token.offset_to, 12);
+    }
+    {
+        let token = stream.next().unwrap();
+        assert_eq!(token.text, "もも");
+        assert_eq!(token.offset_from, 12);
+       assert_eq!(token.offset_to, 18);
+    }
+    {
+        let token = stream.next().unwrap();
+        assert_eq!(token.text, "も");
+        assert_eq!(token.offset_from, 18);
+        assert_eq!(token.offset_to, 21);
+    }
+    {
+        let token = stream.next().unwrap();
+        assert_eq!(token.text, "もも");
+        assert_eq!(token.offset_from, 21);  
+        assert_eq!(token.offset_to, 27);
+    }
+    {
+        let token = stream.next().unwrap();
+        assert_eq!(token.text, "の");
+        assert_eq!(token.offset_from, 27);  
+        assert_eq!(token.offset_to, 30);
+    }
+    {
+        let token = stream.next().unwrap();
+        assert_eq!(token.text, "うち");
+        assert_eq!(token.offset_from, 30);
+        assert_eq!(token.offset_to, 36);
+    }
+    assert!(stream.next().is_none());
+
+    Ok(())
+}
+```
+
 ## API reference
 
 The API reference is available. Please see following URL:
