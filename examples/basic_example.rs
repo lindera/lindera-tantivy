@@ -1,25 +1,3 @@
-# Lindera tokenizer for Tantivy
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Join the chat at https://gitter.im/lindera-morphology/lindera](https://badges.gitter.im/lindera-morphology/lindera.svg)](https://gitter.im/lindera-morphology/lindera?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-A Tokenizer for [Tantivy](https://github.com/tantivy-search/tantivy), based on [Lindera](https://github.com/lindera-morphology/lindera).
-
-## Build
-
-The following products are required to build:
-
-- Rust >= 1.39.0
-- make >= 3.81
-
-```text
-% make build
-```
-
-## Usage
-
-### Basic example
-
-```rust
 use lindera_tantivy::tokenizer::LinderaTokenizer;
 use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
 use tantivy::{Index, doc};
@@ -128,9 +106,3 @@ fn main() -> tantivy::Result<()> {
 
     Ok(())
 }
-```
-
-## API reference
-
-The API reference is available. Please see following URL:
-- <a href="https://docs.rs/lindera-tantivy" target="_blank">lindera-tantivy</a>
