@@ -1,6 +1,6 @@
 [package]
 name = "lindera-tantivy"
-version = "0.1.0"
+version = "0.1.1"
 authors = ["Minoru Osuka <minoru.osuka@gmail.com>"]
 edition = "2018"
 description = "A Tokenizer for Tantivy, based on Lindera."
@@ -13,5 +13,6 @@ categories = ["text-processing"]
 license = "MIT"
 
 [dependencies]
-lindera = "0.3.4"
 tantivy = "0.12.0"
+
+lindera = "0.3.5"
