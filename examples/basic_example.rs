@@ -1,8 +1,8 @@
 use lindera_tantivy::tokenizer::LinderaTokenizer;
-use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
-use tantivy::{Index, doc};
-use tantivy::query::QueryParser;
 use tantivy::collector::TopDocs;
+use tantivy::query::QueryParser;
+use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
+use tantivy::{doc, Index};
 
 fn main() -> tantivy::Result<()> {
     // create schema builder
