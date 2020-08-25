@@ -19,6 +19,6 @@ tag:
 	git push origin v$(LINDERA_TANTIVY_VERSION)
 
 publish:
-ifeq ($(shell cargo show --json lindera-tantivy | jq -r '.versions[].num' | grep $(LINDERA_TANTIVY_VERSION)),)
+ifeq ($(shell curl -s -XGET https://crates.io/api/v1/crates/lindera-tantivy | jq -r '.versions[].num' | grep $(LINDERA_TANTIVY_VERSION)),)
 	cargo package && cargo publish
 endif
