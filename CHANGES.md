@@ -3,6 +3,7 @@ All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 0.2.0 (2020-08-25)
+- Update Makefile #8 @mosuka
 - Bump up version (tantivy 0.13.0) #7 @ken0x0a
 
 ## 0.1.3 (2020-05-30)
