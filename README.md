@@ -9,10 +9,9 @@ A Tokenizer for [Tantivy](https://github.com/tantivy-search/tantivy), based on [
 The following products are required to build:
 
 - Rust >= 1.46.0
-- make >= 3.81
 
 ```text
-% make build
+% cargo build
 ```
 
 ## Usage
