@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+
+- Upgrade lindera 0.6.0 and tantivy 0.13.2 @johtani 
+
 ## 0.2.0 (2020-08-25)
 - Update Makefile #8 @mosuka
 - Bump up version (tantivy 0.13.0) #7 @ken0x0a

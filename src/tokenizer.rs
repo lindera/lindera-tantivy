@@ -1,5 +1,6 @@
 use crate::stream::LinderaTokenStream;
 use lindera::tokenizer::Tokenizer as LTokenizer;
+use lindera_core::core::viterbi::{Mode, Penalty};
 use tantivy::tokenizer::{BoxTokenStream, Tokenizer};
 
 /// Tokenize text with the specified mode and dictionary.
@@ -70,6 +71,15 @@ pub struct LinderaTokenizer {
 
 impl LinderaTokenizer {
     pub fn new(mode: &str, dict: &str) -> LinderaTokenizer {
+        let mode = match mode {
+            "normal" => Mode::Normal,
+            "decompose" => Mode::Decompose(Penalty::default()),
+            _ => {
+                // show error message
+                println!("unsupported mode: {}", mode);
+                Mode::Normal
+            }
+        };
         LinderaTokenizer {
             tokenizer: LTokenizer::new(mode, dict),
         }
