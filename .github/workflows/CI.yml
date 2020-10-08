@@ -1,5 +1,5 @@
 on:
-  pull_request:
+  push:
     types: [opened, synchronize]
 
 name: CI
