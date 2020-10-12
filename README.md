@@ -11,7 +11,7 @@ The following products are required to build:
 - Rust >= 1.46.0
 
 ```text
-% cargo build
+% cargo build --release
 ```
 
 ## Usage
