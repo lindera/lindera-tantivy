@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## Unreleased
+- Upgrade dependencies #13 @mosuka
+
 ## 0.6.0 (2020-10-08)
 - Bump up version to 0.6.0 #12 @mosuka
 - Add GitHub Actions integration #11 mosuka
