@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.7.1 (2020-10-15)
+- Bump up version to 0.7.1 #17 @mosuka 
+
 ## 0.7.0 (2020-10-12)
 - Bump up version to 0.7.0 #14 @mosuka
 - Upgrade dependencies #13 @mosuka
