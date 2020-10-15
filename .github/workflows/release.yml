@@ -9,7 +9,6 @@ on:
 jobs:
   create-release:
     name: Create Release
-    needs: [build]
     runs-on: ubuntu-latest
     steps:
       - id: create-release
@@ -28,7 +27,7 @@ jobs:
       matrix:
         os: [ubuntu-latest]
         toolchain: [stable]
-    needs: [upload-release]
+    needs: [create-release]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v1
