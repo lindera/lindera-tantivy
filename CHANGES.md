@@ -4,6 +4,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 
 ## 0.7.2 (2021-02-08)
 - Upgrade Tantivy to 0.14.0 #19 @mosuka
+- Bump up version to 0.7.2 #21 @mosuka
 
 ## 0.7.1 (2020-10-15)
 - Bump up version to 0.7.1 #17 @mosuka 
