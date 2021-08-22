@@ -1,7 +1,9 @@
-use crate::stream::LinderaTokenStream;
-use lindera::tokenizer::Tokenizer as LTokenizer;
-use lindera_core::core::viterbi::{Mode, Penalty};
 use tantivy::tokenizer::{BoxTokenStream, Tokenizer};
+
+use lindera::tokenizer::{Tokenizer as LTokenizer, TokenizerConfig};
+use lindera_core::LinderaResult;
+
+use crate::stream::LinderaTokenStream;
 
 /// Tokenize text with the specified mode and dictionary.
 ///
@@ -18,7 +20,7 @@ use tantivy::tokenizer::{BoxTokenStream, Tokenizer};
 /// use lindera_tantivy::tokenizer::*;
 /// use tantivy::tokenizer::Tokenizer;
 ///
-/// let tokenizer = LinderaTokenizer::new("normal", "");
+/// let tokenizer = LinderaTokenizer::new().unwrap();
 /// let mut stream = tokenizer.token_stream("すもももももももものうち");
 /// {
 ///     let token = stream.next().unwrap();
@@ -70,26 +72,26 @@ pub struct LinderaTokenizer {
 }
 
 impl LinderaTokenizer {
-    pub fn new(mode: &str, dict: &str) -> LinderaTokenizer {
-        let mode = match mode {
-            "normal" => Mode::Normal,
-            "decompose" => Mode::Decompose(Penalty::default()),
-            _ => {
-                // show error message
-                println!("unsupported mode: {}", mode);
-                Mode::Normal
-            }
-        };
-        LinderaTokenizer {
-            tokenizer: LTokenizer::new(mode, dict),
-        }
+    pub fn new() -> LinderaResult<LinderaTokenizer> {
+        Ok(LinderaTokenizer {
+            tokenizer: LTokenizer::new()?,
+        })
+    }
+
+    pub fn with_config(config: TokenizerConfig) -> LinderaResult<LinderaTokenizer> {
+        Ok(LinderaTokenizer {
+            tokenizer: LTokenizer::with_config(config)?,
+        })
     }
 }
 
 impl Tokenizer for LinderaTokenizer {
     fn token_stream<'a>(&self, text: &'a str) -> BoxTokenStream<'a> {
         let mut tokenizer = self.tokenizer.clone();
-        let result = tokenizer.tokenize(text);
+        let result = match tokenizer.tokenize(text) {
+            Ok(result) => result,
+            Err(_err) => Vec::new(),
+        };
 
         BoxTokenStream::from(LinderaTokenStream {
             result,
@@ -114,7 +116,9 @@ mod tests {
     #[test]
     fn test_tokenizer_equal() {
         let tokens = test_helper(
-            LinderaTokenizer::new("normal", "").token_stream("すもももももももものうち"),
+            LinderaTokenizer::new()
+                .unwrap()
+                .token_stream("すもももももももものうち"),
         );
         assert_eq!(tokens.len(), 7);
         {

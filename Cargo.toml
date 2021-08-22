@@ -17,7 +17,9 @@ categories = ["text-processing"]
 license = "MIT"
 
 [dependencies]
-tantivy = "0.14"
+anyhow = "1.0"
+tantivy = "0.15"
+thiserror = "1.0"
 
-lindera = "0.7"
-lindera-core = "0.7"
+lindera = "0.8.0"
+lindera-core = "0.8.0"
