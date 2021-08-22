@@ -1,8 +1,11 @@
-use lindera_tantivy::tokenizer::LinderaTokenizer;
 use tantivy::collector::TopDocs;
 use tantivy::query::QueryParser;
 use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
 use tantivy::{doc, Index};
+
+use lindera::tokenizer::TokenizerConfig;
+use lindera_core::viterbi::{Mode, Penalty};
+use lindera_tantivy::tokenizer::LinderaTokenizer;
 
 fn main() -> tantivy::Result<()> {
     // create schema builder
@@ -50,10 +53,16 @@ fn main() -> tantivy::Result<()> {
     // create index on memory
     let index = Index::create_in_ram(schema.clone());
 
+    let config = TokenizerConfig {
+        dict_path: None,
+        user_dict_path: None,
+        mode: Mode::Decompose(Penalty::default()),
+    };
+
     // register Lindera tokenizer
     index
         .tokenizers()
-        .register("lang_ja", LinderaTokenizer::new("decompose", ""));
+        .register("lang_ja", LinderaTokenizer::with_config(config).unwrap());
 
     // create index writer
     let mut index_writer = index.writer(50_000_000)?;
