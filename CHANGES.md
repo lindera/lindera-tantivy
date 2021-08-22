@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 0.8.0 (2021-08-22)
 - Update Lindera to 0.8 and Tantivy to 0.15. #22 @mosuka
 
 ## 0.7.2 (2021-02-08)
