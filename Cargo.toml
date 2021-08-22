@@ -1,6 +1,6 @@
 [package]
 name = "lindera-tantivy"
-version = "0.7.2"
+version = "0.8.0"
 authors = [
     "Minoru Osuka <minoru.osuka@gmail.com>",
     "@ken0x0a",
