@@ -1,6 +1,6 @@
 [package]
 name = "lindera-tantivy"
-version = "0.8.0"
+version = "0.8.1"
 authors = [
     "Minoru Osuka <minoru.osuka@gmail.com>",
     "@ken0x0a",
@@ -19,5 +19,5 @@ license = "MIT"
 [dependencies]
 tantivy = "0.16"
 
-lindera = "0.8.0"
-lindera-core = "0.8.0"
+lindera = "0.8.1"
+lindera-core = "0.8.1"

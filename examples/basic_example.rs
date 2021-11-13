@@ -56,6 +56,7 @@ fn main() -> tantivy::Result<()> {
     let config = TokenizerConfig {
         dict_path: None,
         user_dict_path: None,
+        user_dict_bin_path: None,
         mode: Mode::Decompose(Penalty::default()),
     };
 
