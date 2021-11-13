@@ -19,5 +19,5 @@ license = "MIT"
 [dependencies]
 tantivy = "0.16"
 
-lindera = "0.8.0"
-lindera-core = "0.8.0"
+lindera = "0.8.1"
+lindera-core = "0.8.1"
