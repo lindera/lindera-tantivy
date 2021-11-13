@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.8.1 (2021-11-13)
+- Update lindera to 0.8.1 #26 @mosuka
+- Update tantivy requirement from 0.15 to 0.16 #25
+
 ## 0.8.0 (2021-08-22)
 - Bump up version to 0.8.0. #23 @mosuka
 - Update Lindera to 0.8 and Tantivy to 0.15. #22 @mosuka
