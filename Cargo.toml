@@ -1,12 +1,7 @@
 [package]
 name = "lindera-tantivy"
-version = "0.8.1"
-authors = [
-    "Minoru Osuka <minoru.osuka@gmail.com>",
-    "@ken0x0a",
-    "Jun Ohtani <johtani@gmail.com>"
-]
-edition = "2018"
+version = "0.9.0"
+edition = "2021"
 description = "A Tokenizer for Tantivy, based on Lindera."
 documentation = "https://docs.rs/lindera-tantivy"
 homepage = "https://github.com/lindera-morphology/lindera-tantivy"
@@ -19,5 +14,5 @@ license = "MIT"
 [dependencies]
 tantivy = "0.16"
 
-lindera = "0.8.1"
-lindera-core = "0.8.1"
+lindera = "0.9.0"
+lindera-core = "0.9.0"
