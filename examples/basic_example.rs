@@ -3,7 +3,7 @@ use tantivy::query::QueryParser;
 use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
 use tantivy::{doc, Index};
 
-use lindera::tokenizer::TokenizerConfig;
+use lindera::tokenizer::{TokenizerConfig, UserDictionaryType};
 use lindera_core::viterbi::{Mode, Penalty};
 use lindera_tantivy::tokenizer::LinderaTokenizer;
 
@@ -56,7 +56,7 @@ fn main() -> tantivy::Result<()> {
     let config = TokenizerConfig {
         dict_path: None,
         user_dict_path: None,
-        user_dict_bin_path: None,
+        user_dict_type: UserDictionaryType::CSV,
         mode: Mode::Decompose(Penalty::default()),
     };
 
