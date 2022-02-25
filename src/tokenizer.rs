@@ -1,5 +1,3 @@
-use std::sync::RwLock;
-
 use tantivy::tokenizer::{BoxTokenStream, Tokenizer};
 
 use lindera::tokenizer::{Tokenizer as LTokenizer, TokenizerConfig};
@@ -69,15 +67,13 @@ use crate::stream::LinderaTokenStream;
 /// assert!(stream.next().is_none());
 /// ```
 pub struct LinderaTokenizer {
-    pub tokenizer: RwLock<LTokenizer>,
+    pub tokenizer: LTokenizer,
 }
 
 impl Clone for LinderaTokenizer {
     fn clone(&self) -> Self {
         Self {
-            // NOTE: read() returns an error when the lock is poisoned.
-            // That case means the tokenizer panics, so we use unwrap() here.
-            tokenizer: RwLock::new(self.tokenizer.read().unwrap().clone()),
+            tokenizer: self.tokenizer.clone(),
         }
     }
 }
@@ -85,22 +81,20 @@ impl Clone for LinderaTokenizer {
 impl LinderaTokenizer {
     pub fn new() -> LinderaResult<LinderaTokenizer> {
         Ok(LinderaTokenizer {
-            tokenizer: RwLock::new(LTokenizer::new()?),
+            tokenizer: LTokenizer::new()?,
         })
     }
 
     pub fn with_config(config: TokenizerConfig) -> LinderaResult<LinderaTokenizer> {
         Ok(LinderaTokenizer {
-            tokenizer: RwLock::new(LTokenizer::with_config(config)?),
+            tokenizer: LTokenizer::with_config(config)?,
         })
     }
 }
 
 impl Tokenizer for LinderaTokenizer {
     fn token_stream<'a>(&self, text: &'a str) -> BoxTokenStream<'a> {
-        // NOTE: write() returns an error when the lock is poisoned.
-        // That case means the tokenizer panics, so we use unwrap() here.
-        let result = match self.tokenizer.write().unwrap().tokenize(text) {
+        let result = match self.tokenizer.tokenize(text) {
             Ok(result) => result,
             Err(_err) => Vec::new(),
         };
