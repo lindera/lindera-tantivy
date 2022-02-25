@@ -61,9 +61,9 @@ fn bench_indexing(c: &mut Criterion) {
     let mut index_writer = index.writer(50_000_000).unwrap();
 
     // Using benchmark_group for changing sample_size
-    let mut group = c.benchmark_group("Long text");
+    let mut group = c.benchmark_group("indexing");
     group.sample_size(100);
-    group.bench_function("bench-index-text", |b| {
+    group.bench_function("bench-indexing", |b| {
         b.iter(|| {
             // add document
             index_writer.add_document(doc!(
