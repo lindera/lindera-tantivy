@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.10.0 (2022-02-25)
+- Update lindera to 0.10.0 #32 @mosuka
+
 ## 0.9.0 (2022-02-20)
 - Update Lindera to v0.9.0 #30 @mosuka
 - Use RwLock instead of cloning tokenizer #27 @vbkaisetsu
