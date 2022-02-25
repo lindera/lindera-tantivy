@@ -1,6 +1,6 @@
 [package]
 name = "lindera-tantivy"
-version = "0.9.0"
+version = "0.10.0"
 edition = "2021"
 description = "A Tokenizer for Tantivy, based on Lindera."
 documentation = "https://docs.rs/lindera-tantivy"
@@ -14,8 +14,8 @@ license = "MIT"
 [dependencies]
 tantivy = "0.16"
 
-lindera = "0.9.0"
-lindera-core = "0.9.0"
+lindera = "0.10.0"
+lindera-core = "0.10.0"
 
 [dev-dependencies]
 criterion = "0.3"
