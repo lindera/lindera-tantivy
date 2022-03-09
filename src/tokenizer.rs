@@ -51,8 +51,13 @@ impl Tokenizer for LinderaTokenizer {
 #[cfg(test)]
 #[cfg(feature = "ipadic")]
 mod tests {
-    use crate::tokenizer::LinderaTokenizer;
     use tantivy::tokenizer::{BoxTokenStream, Token, Tokenizer};
+
+    use lindera::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
+    use lindera_core::viterbi::Mode;
+    use lindera_core::viterbi::Penalty;
+
+    use crate::tokenizer::LinderaTokenizer;
 
     fn test_helper(mut tokenizer: BoxTokenStream) -> Vec<Token> {
         let mut tokens: Vec<Token> = vec![];
@@ -62,8 +67,16 @@ mod tests {
 
     #[test]
     fn test_tokenizer_equal() {
+        let config = TokenizerConfig {
+            dict_type: DictionaryType::Ipadic,
+            dict_path: None,
+            user_dict_path: None,
+            user_dict_type: UserDictionaryType::Csv,
+            mode: Mode::Decompose(Penalty::default()),
+        };
+
         let tokens = test_helper(
-            LinderaTokenizer::new()
+            LinderaTokenizer::with_config(config)
                 .unwrap()
                 .token_stream("すもももももももものうち"),
         );
