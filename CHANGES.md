@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.11.1 (2022-03-09)
+- Update Lindera and Tantivy #37 @mosuka
+
 ## 0.10.0 (2022-02-25)
 - Update lindera to 0.10.0 #32 @mosuka
 

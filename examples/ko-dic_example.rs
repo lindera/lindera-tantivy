@@ -1,13 +1,14 @@
-use tantivy::collector::TopDocs;
-use tantivy::query::QueryParser;
-use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
-use tantivy::{doc, Index};
-
-use lindera::tokenizer::{TokenizerConfig, UserDictionaryType};
-use lindera_core::viterbi::{Mode, Penalty};
-use lindera_tantivy::tokenizer::LinderaTokenizer;
-
+#[cfg(feature = "ko-dic")]
 fn main() -> tantivy::Result<()> {
+    use tantivy::collector::TopDocs;
+    use tantivy::query::QueryParser;
+    use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
+    use tantivy::{doc, Index};
+
+    use lindera::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
+    use lindera_core::viterbi::{Mode, Penalty};
+    use lindera_tantivy::tokenizer::LinderaTokenizer;
+
     // create schema builder
     let mut schema_builder = Schema::builder();
 
@@ -29,7 +30,7 @@ fn main() -> tantivy::Result<()> {
         TextOptions::default()
             .set_indexing_options(
                 TextFieldIndexing::default()
-                    .set_tokenizer("lang_ja")
+                    .set_tokenizer("lang_ko")
                     .set_index_option(IndexRecordOption::WithFreqsAndPositions),
             )
             .set_stored(),
@@ -41,7 +42,7 @@ fn main() -> tantivy::Result<()> {
         TextOptions::default()
             .set_indexing_options(
                 TextFieldIndexing::default()
-                    .set_tokenizer("lang_ja")
+                    .set_tokenizer("lang_ko")
                     .set_index_option(IndexRecordOption::WithFreqsAndPositions),
             )
             .set_stored(),
@@ -54,16 +55,17 @@ fn main() -> tantivy::Result<()> {
     let index = Index::create_in_ram(schema.clone());
 
     let config = TokenizerConfig {
+        dict_type: DictionaryType::Kodic,
         dict_path: None,
         user_dict_path: None,
-        user_dict_type: UserDictionaryType::CSV,
+        user_dict_type: UserDictionaryType::Csv,
         mode: Mode::Decompose(Penalty::default()),
     };
 
     // register Lindera tokenizer
     index
         .tokenizers()
-        .register("lang_ja", LinderaTokenizer::with_config(config).unwrap());
+        .register("lang_ko", LinderaTokenizer::with_config(config).unwrap());
 
     // create index writer
     let mut index_writer = index.writer(50_000_000)?;
@@ -71,23 +73,23 @@ fn main() -> tantivy::Result<()> {
     // add document
     index_writer.add_document(doc!(
     id => "1",
-    title => "成田国際空港",
-    body => "成田国際空港（なりたこくさいくうこう、英: Narita International Airport）は、千葉県成田市南東部から芝山町北部にかけて建設された日本最大の国際拠点空港である[1]。首都圏東部（東京の東60km）に位置している。空港コードはNRT。"
-    ));
+    title => "나리타 국제공항",
+    body => "나리타 국제공항(일본어: 成田国際空港, 영어: Narita International Airport, IATA: NRT, ICAO: RJAA)은 일본 지바현 나리타시에 위치한 국제공항으로, 도쿄도 도심에서 동북쪽으로 약 62km 떨어져 있다."
+    )).unwrap();
 
     // add document
     index_writer.add_document(doc!(
     id => "2",
-    title => "東京国際空港",
-    body => "東京国際空港（とうきょうこくさいくうこう、英語: Tokyo International Airport）は、東京都大田区にある日本最大の空港。通称は羽田空港（はねだくうこう、英語: Haneda Airport）であり、単に「羽田」と呼ばれる場合もある。空港コードはHND。"
-    ));
+    title => "도쿄 국제공항",
+    body => "도쿄국제공항(일본어: 東京国際空港、とうきょうこくさいくうこう, 영어: Tokyo International Airport)은 일본 도쿄도 오타구에 있는 공항이다. 보통 이 일대의 옛 지명을 본뜬 하네다 공항(일본어: 羽田空港, 영어: Haneda Airport)이라고 불린다."
+    )).unwrap();
 
     // add document
     index_writer.add_document(doc!(
     id => "3",
-    title => "関西国際空港",
-    body => "関西国際空港（かんさいこくさいくうこう、英: Kansai International Airport）は大阪市の南西35㎞に位置する西日本の国際的な玄関口であり、関西三空港の一つとして大阪国際空港（伊丹空港）、神戸空港とともに関西エアポート株式会社によって一体運営が行われている。"
-    ));
+    title => "간사이 국제공항",
+    body => "간사이 국제공항(일본어: 関西国際空港, IATA: KIX, ICAO: RJBB)은 일본 오사카부 오사카 만에 조성된 인공섬에 위치한 일본의 공항으로, 대한민국의 인천국제공항보다 6년 반 앞선 1994년 9월 4일에 개항했다."
+    )).unwrap();
 
     // commit
     index_writer.commit()?;
@@ -102,7 +104,7 @@ fn main() -> tantivy::Result<()> {
     let query_parser = QueryParser::for_index(&index, vec![title, body]);
 
     // parse query
-    let query_str = "東京";
+    let query_str = "도쿄";
     let query = query_parser.parse_query(query_str)?;
     println!("Query String: {}", query_str);
 
@@ -114,5 +116,10 @@ fn main() -> tantivy::Result<()> {
         println!("{}", schema.to_json(&retrieved_doc));
     }
 
+    Ok(())
+}
+
+#[cfg(not(feature = "ko-dic"))]
+fn main() -> tantivy::Result<()> {
     Ok(())
 }

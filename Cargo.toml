@@ -1,8 +1,8 @@
 [package]
 name = "lindera-tantivy"
-version = "0.10.0"
+version = "0.11.1"
 edition = "2021"
-description = "A Tokenizer for Tantivy, based on Lindera."
+description = "Lindera Tokenizer for Tantivy."
 documentation = "https://docs.rs/lindera-tantivy"
 homepage = "https://github.com/lindera-morphology/lindera-tantivy"
 repository = "https://github.com/lindera-morphology/lindera-tantivy"
@@ -11,11 +11,19 @@ keywords = ["tokenizer", "tantivy", "lindera"]
 categories = ["text-processing"]
 license = "MIT"
 
-[dependencies]
-tantivy = "0.16"
+[features]
+default = []
+full = ["ipadic", "unidic", "ko-dic", "cc-cedict"]
+ipadic = ["lindera/ipadic"]  # Japanese dictionary
+unidic = ["lindera/unidic"]  # Japanese dictionary
+ko-dic = ["lindera/ko-dic"]  # Korean dictionary
+cc-cedict = ["lindera/cc-cedict"]  # Chinese dictionary
 
-lindera = "0.10.0"
-lindera-core = "0.10.0"
+[dependencies]
+tantivy = "0.17"
+
+lindera = "0.11.1"
+lindera-core = "0.11.1"
 
 [dev-dependencies]
 criterion = "0.3"

@@ -1,17 +1,19 @@
 use criterion::Criterion;
 use criterion::{criterion_group, criterion_main};
-use tantivy::doc;
-use tantivy::schema::IndexRecordOption;
-use tantivy::schema::Schema;
-use tantivy::schema::TextFieldIndexing;
-use tantivy::schema::TextOptions;
-use tantivy::Index;
 
-use lindera::tokenizer::{TokenizerConfig, UserDictionaryType};
-use lindera_core::viterbi::{Mode, Penalty};
-use lindera_tantivy::tokenizer::LinderaTokenizer;
-
+#[cfg(feature = "ipadic")]
 fn bench_indexing(c: &mut Criterion) {
+    use tantivy::doc;
+    use tantivy::schema::IndexRecordOption;
+    use tantivy::schema::Schema;
+    use tantivy::schema::TextFieldIndexing;
+    use tantivy::schema::TextOptions;
+    use tantivy::Index;
+
+    use lindera::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
+    use lindera_core::viterbi::{Mode, Penalty};
+    use lindera_tantivy::tokenizer::LinderaTokenizer;
+
     // create schema builder
     let mut schema_builder = Schema::builder();
 
@@ -46,9 +48,10 @@ fn bench_indexing(c: &mut Criterion) {
     let index = Index::create_in_ram(schema.clone());
 
     let config = TokenizerConfig {
+        dict_type: DictionaryType::Ipadic,
         dict_path: None,
         user_dict_path: None,
-        user_dict_type: UserDictionaryType::CSV,
+        user_dict_type: UserDictionaryType::Csv,
         mode: Mode::Decompose(Penalty::default()),
     };
 
@@ -77,6 +80,9 @@ fn bench_indexing(c: &mut Criterion) {
     });
     group.finish();
 }
+
+#[cfg(not(feature = "ipadic"))]
+fn bench_indexing(_c: &mut Criterion) {}
 
 criterion_group!(benches, bench_indexing,);
 criterion_main!(benches);
