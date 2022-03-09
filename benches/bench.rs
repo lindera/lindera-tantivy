@@ -1,17 +1,19 @@
 use criterion::Criterion;
 use criterion::{criterion_group, criterion_main};
-use tantivy::doc;
-use tantivy::schema::IndexRecordOption;
-use tantivy::schema::Schema;
-use tantivy::schema::TextFieldIndexing;
-use tantivy::schema::TextOptions;
-use tantivy::Index;
 
-use lindera::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
-use lindera_core::viterbi::{Mode, Penalty};
-use lindera_tantivy::tokenizer::LinderaTokenizer;
-
+#[cfg(feature = "ipadic")]
 fn bench_indexing(c: &mut Criterion) {
+    use tantivy::doc;
+    use tantivy::schema::IndexRecordOption;
+    use tantivy::schema::Schema;
+    use tantivy::schema::TextFieldIndexing;
+    use tantivy::schema::TextOptions;
+    use tantivy::Index;
+
+    use lindera::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
+    use lindera_core::viterbi::{Mode, Penalty};
+    use lindera_tantivy::tokenizer::LinderaTokenizer;
+
     // create schema builder
     let mut schema_builder = Schema::builder();
 
@@ -78,6 +80,9 @@ fn bench_indexing(c: &mut Criterion) {
     });
     group.finish();
 }
+
+#[cfg(not(feature = "ipadic"))]
+fn bench_indexing(c: &mut Criterion) {}
 
 criterion_group!(benches, bench_indexing,);
 criterion_main!(benches);

@@ -1,13 +1,14 @@
-use tantivy::collector::TopDocs;
-use tantivy::query::QueryParser;
-use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
-use tantivy::{doc, Index};
-
-use lindera::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
-use lindera_core::viterbi::{Mode, Penalty};
-use lindera_tantivy::tokenizer::LinderaTokenizer;
-
+#[cfg(feature = "cc-cedict")]
 fn main() -> tantivy::Result<()> {
+    use tantivy::collector::TopDocs;
+    use tantivy::query::QueryParser;
+    use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
+    use tantivy::{doc, Index};
+
+    use lindera::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
+    use lindera_core::viterbi::{Mode, Penalty};
+    use lindera_tantivy::tokenizer::LinderaTokenizer;
+
     // create schema builder
     let mut schema_builder = Schema::builder();
 
@@ -115,5 +116,10 @@ fn main() -> tantivy::Result<()> {
         println!("{}", schema.to_json(&retrieved_doc));
     }
 
+    Ok(())
+}
+
+#[cfg(not(feature = "cc-cedict"))]
+fn main() -> tantivy::Result<()> {
     Ok(())
 }
