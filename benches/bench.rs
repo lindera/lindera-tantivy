@@ -82,7 +82,7 @@ fn bench_indexing(c: &mut Criterion) {
 }
 
 #[cfg(not(feature = "ipadic"))]
-fn bench_indexing(c: &mut Criterion) {}
+fn bench_indexing(_c: &mut Criterion) {}
 
 criterion_group!(benches, bench_indexing,);
 criterion_main!(benches);
