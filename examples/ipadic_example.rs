@@ -3,7 +3,7 @@ use tantivy::query::QueryParser;
 use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
 use tantivy::{doc, Index};
 
-use lindera::tokenizer::{TokenizerConfig, UserDictionaryType};
+use lindera::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
 use lindera_core::viterbi::{Mode, Penalty};
 use lindera_tantivy::tokenizer::LinderaTokenizer;
 
@@ -54,9 +54,10 @@ fn main() -> tantivy::Result<()> {
     let index = Index::create_in_ram(schema.clone());
 
     let config = TokenizerConfig {
+        dict_type: DictionaryType::Ipadic,
         dict_path: None,
         user_dict_path: None,
-        user_dict_type: UserDictionaryType::CSV,
+        user_dict_type: UserDictionaryType::Csv,
         mode: Mode::Decompose(Penalty::default()),
     };
 
@@ -72,22 +73,22 @@ fn main() -> tantivy::Result<()> {
     index_writer.add_document(doc!(
     id => "1",
     title => "成田国際空港",
-    body => "成田国際空港（なりたこくさいくうこう、英: Narita International Airport）は、千葉県成田市南東部から芝山町北部にかけて建設された日本最大の国際拠点空港である[1]。首都圏東部（東京の東60km）に位置している。空港コードはNRT。"
-    ));
+    body => "成田国際空港（なりたこくさいくうこう、英: Narita International Airport）は、千葉県成田市南東部から芝山町北部にかけて建設された日本最大の国際拠点空港である。首都圏東部（東京の東60km）に位置している。空港コードはNRT。"
+    )).unwrap();
 
     // add document
     index_writer.add_document(doc!(
     id => "2",
     title => "東京国際空港",
     body => "東京国際空港（とうきょうこくさいくうこう、英語: Tokyo International Airport）は、東京都大田区にある日本最大の空港。通称は羽田空港（はねだくうこう、英語: Haneda Airport）であり、単に「羽田」と呼ばれる場合もある。空港コードはHND。"
-    ));
+    )).unwrap();
 
     // add document
     index_writer.add_document(doc!(
     id => "3",
     title => "関西国際空港",
     body => "関西国際空港（かんさいこくさいくうこう、英: Kansai International Airport）は大阪市の南西35㎞に位置する西日本の国際的な玄関口であり、関西三空港の一つとして大阪国際空港（伊丹空港）、神戸空港とともに関西エアポート株式会社によって一体運営が行われている。"
-    ));
+    )).unwrap();
 
     // commit
     index_writer.commit()?;

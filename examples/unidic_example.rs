@@ -1,35 +1,9 @@
-# Lindera tokenizer for Tantivy
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Join the chat at https://gitter.im/lindera-morphology/lindera](https://badges.gitter.im/lindera-morphology/lindera.svg)](https://gitter.im/lindera-morphology/lindera?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-[Lindera](https://github.com/lindera-morphology/lindera) Tokenizer for [Tantivy](https://github.com/tantivy-search/tantivy).
-
-
-## Usage
-
-Make sure you have activated the required dictionaries for the 　Lindera in Cargo.toml.
-The following example enables IPADIC.
-
-```
-[dependencies]
-lindera = { version = "0.11.1", features = ["ipadic"] }
-```
-
-- ipadic: Japanese dictionary
-- unidic: Japanese dictionary
-- ko-dic: Korean dictionary
-- cc-cedict: Chinese dictionary
-
-
-### Basic example
-
-```rust
 use tantivy::collector::TopDocs;
 use tantivy::query::QueryParser;
 use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
 use tantivy::{doc, Index};
 
-use lindera::tokenizer::{TokenizerConfig, UserDictionaryType, DictionaryType};
+use lindera::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
 use lindera_core::viterbi::{Mode, Penalty};
 use lindera_tantivy::tokenizer::LinderaTokenizer;
 
@@ -80,7 +54,7 @@ fn main() -> tantivy::Result<()> {
     let index = Index::create_in_ram(schema.clone());
 
     let config = TokenizerConfig {
-        dict_type: DictionaryType::Ipadic,
+        dict_type: DictionaryType::Unidic,
         dict_path: None,
         user_dict_path: None,
         user_dict_type: UserDictionaryType::Csv,
@@ -143,9 +117,3 @@ fn main() -> tantivy::Result<()> {
 
     Ok(())
 }
-```
-
-## API reference
-
-The API reference is available. Please see following URL:
-- <a href="https://docs.rs/lindera-tantivy" target="_blank">lindera-tantivy</a>

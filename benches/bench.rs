@@ -7,7 +7,7 @@ use tantivy::schema::TextFieldIndexing;
 use tantivy::schema::TextOptions;
 use tantivy::Index;
 
-use lindera::tokenizer::{TokenizerConfig, UserDictionaryType};
+use lindera::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
 use lindera_core::viterbi::{Mode, Penalty};
 use lindera_tantivy::tokenizer::LinderaTokenizer;
 
@@ -46,9 +46,10 @@ fn bench_indexing(c: &mut Criterion) {
     let index = Index::create_in_ram(schema.clone());
 
     let config = TokenizerConfig {
+        dict_type: DictionaryType::Ipadic,
         dict_path: None,
         user_dict_path: None,
-        user_dict_type: UserDictionaryType::CSV,
+        user_dict_type: UserDictionaryType::Csv,
         mode: Mode::Decompose(Penalty::default()),
     };
 

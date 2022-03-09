@@ -1,35 +1,9 @@
-# Lindera tokenizer for Tantivy
-
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Join the chat at https://gitter.im/lindera-morphology/lindera](https://badges.gitter.im/lindera-morphology/lindera.svg)](https://gitter.im/lindera-morphology/lindera?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
-
-[Lindera](https://github.com/lindera-morphology/lindera) Tokenizer for [Tantivy](https://github.com/tantivy-search/tantivy).
-
-
-## Usage
-
-Make sure you have activated the required dictionaries for the 　Lindera in Cargo.toml.
-The following example enables IPADIC.
-
-```
-[dependencies]
-lindera = { version = "0.11.1", features = ["ipadic"] }
-```
-
-- ipadic: Japanese dictionary
-- unidic: Japanese dictionary
-- ko-dic: Korean dictionary
-- cc-cedict: Chinese dictionary
-
-
-### Basic example
-
-```rust
 use tantivy::collector::TopDocs;
 use tantivy::query::QueryParser;
 use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
 use tantivy::{doc, Index};
 
-use lindera::tokenizer::{TokenizerConfig, UserDictionaryType, DictionaryType};
+use lindera::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
 use lindera_core::viterbi::{Mode, Penalty};
 use lindera_tantivy::tokenizer::LinderaTokenizer;
 
@@ -55,7 +29,7 @@ fn main() -> tantivy::Result<()> {
         TextOptions::default()
             .set_indexing_options(
                 TextFieldIndexing::default()
-                    .set_tokenizer("lang_ja")
+                    .set_tokenizer("lang_zh")
                     .set_index_option(IndexRecordOption::WithFreqsAndPositions),
             )
             .set_stored(),
@@ -67,7 +41,7 @@ fn main() -> tantivy::Result<()> {
         TextOptions::default()
             .set_indexing_options(
                 TextFieldIndexing::default()
-                    .set_tokenizer("lang_ja")
+                    .set_tokenizer("lang_zh")
                     .set_index_option(IndexRecordOption::WithFreqsAndPositions),
             )
             .set_stored(),
@@ -80,7 +54,7 @@ fn main() -> tantivy::Result<()> {
     let index = Index::create_in_ram(schema.clone());
 
     let config = TokenizerConfig {
-        dict_type: DictionaryType::Ipadic,
+        dict_type: DictionaryType::Cedict,
         dict_path: None,
         user_dict_path: None,
         user_dict_type: UserDictionaryType::Csv,
@@ -90,7 +64,7 @@ fn main() -> tantivy::Result<()> {
     // register Lindera tokenizer
     index
         .tokenizers()
-        .register("lang_ja", LinderaTokenizer::with_config(config).unwrap());
+        .register("lang_zh", LinderaTokenizer::with_config(config).unwrap());
 
     // create index writer
     let mut index_writer = index.writer(50_000_000)?;
@@ -98,22 +72,22 @@ fn main() -> tantivy::Result<()> {
     // add document
     index_writer.add_document(doc!(
     id => "1",
-    title => "成田国際空港",
-    body => "成田国際空港（なりたこくさいくうこう、英: Narita International Airport）は、千葉県成田市南東部から芝山町北部にかけて建設された日本最大の国際拠点空港である。首都圏東部（東京の東60km）に位置している。空港コードはNRT。"
+    title => "成田国际机场",
+    body => "成田國際機場（日语：成田国際空港／なりたこくさいくうこう Narita Kokusai Kūkō */?；IATA代码：NRT；ICAO代码：RJAA），通稱成田機場（成田空港），原名新東京國際機場（新東京国際空港／しんとうきょうこくさいくうこう Shin-Tōkyō Kokusai Kūkō），是位於日本千葉縣成田市的國際機場，與羽田機場並列為東京兩大聯外機場。占地1,111公頃，擁有3座客運航廈，客運流量居日本第二位，貨運吞吐量則居日本第一、全球第九。根據日本機場分類法，其劃分為據點機場。"
     )).unwrap();
 
     // add document
     index_writer.add_document(doc!(
     id => "2",
-    title => "東京国際空港",
-    body => "東京国際空港（とうきょうこくさいくうこう、英語: Tokyo International Airport）は、東京都大田区にある日本最大の空港。通称は羽田空港（はねだくうこう、英語: Haneda Airport）であり、単に「羽田」と呼ばれる場合もある。空港コードはHND。"
+    title => "東京國際機場",
+    body => "東京國際機場（日语：東京国際空港／とうきょうこくさいくうこう Tōkyō Kokusai Kūkō */?；IATA代码：HND；ICAO代码：RJTT）是位於日本東京都大田區的機場，因座落於羽田地區而通稱為羽田機場（羽田空港／はねだくうこう Haneda Kūkō），啟用於1931年8月25日，與成田國際機場並列為東京兩大聯外機場。"
     )).unwrap();
 
     // add document
     index_writer.add_document(doc!(
     id => "3",
-    title => "関西国際空港",
-    body => "関西国際空港（かんさいこくさいくうこう、英: Kansai International Airport）は大阪市の南西35㎞に位置する西日本の国際的な玄関口であり、関西三空港の一つとして大阪国際空港（伊丹空港）、神戸空港とともに関西エアポート株式会社によって一体運営が行われている。"
+    title => "关西国际机场",
+    body => "關西國際機場（日语：関西国際空港／かんさいこくさいくうこう Kansai kokusai kūkō */?，英語：Kansai International Airport，IATA代码：KIX；ICAO代码：RJBB），常通稱為關西機場、大阪關西機場或關空[註 1]，是位於日本大阪府的機場，坐落於大阪湾东南部的泉州近海離岸5公里的人工島上，面積約1,067.7公頃[2]，行政區劃橫跨大阪府的泉佐野市（北）、田尻町（中）以及泉南市（南）。"
     )).unwrap();
 
     // commit
@@ -143,9 +117,3 @@ fn main() -> tantivy::Result<()> {
 
     Ok(())
 }
-```
-
-## API reference
-
-The API reference is available. Please see following URL:
-- <a href="https://docs.rs/lindera-tantivy" target="_blank">lindera-tantivy</a>
