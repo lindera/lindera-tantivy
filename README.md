@@ -12,7 +12,7 @@ The following example enables IPADIC.
 
 ```
 [dependencies]
-lindera = { version = "0.11.1", features = ["ipadic"] }
+lindera = { version = "0.12.0", features = ["ipadic"] }
 ```
 
 - ipadic: Japanese dictionary
@@ -27,10 +27,11 @@ lindera = { version = "0.11.1", features = ["ipadic"] }
 use tantivy::collector::TopDocs;
 use tantivy::query::QueryParser;
 use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
-use tantivy::{doc, Index};
+use tantivy::doc;
+use tantivy::Index;
 
-use lindera::tokenizer::{TokenizerConfig, UserDictionaryType, DictionaryType};
-use lindera_core::viterbi::{Mode, Penalty};
+use lindera::mode::{Mode, Penalty};
+use lindera::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
 use lindera_tantivy::tokenizer::LinderaTokenizer;
 
 fn main() -> tantivy::Result<()> {

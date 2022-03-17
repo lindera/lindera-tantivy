@@ -1,12 +1,13 @@
 #[cfg(feature = "cc-cedict")]
 fn main() -> tantivy::Result<()> {
     use tantivy::collector::TopDocs;
+    use tantivy::doc;
     use tantivy::query::QueryParser;
     use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
-    use tantivy::{doc, Index};
+    use tantivy::Index;
 
+    use lindera::mode::{Mode, Penalty};
     use lindera::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
-    use lindera_core::viterbi::{Mode, Penalty};
     use lindera_tantivy::tokenizer::LinderaTokenizer;
 
     // create schema builder
