@@ -1,7 +1,7 @@
 use tantivy::tokenizer::{BoxTokenStream, Tokenizer};
 
 use lindera::tokenizer::{Tokenizer as LTokenizer, TokenizerConfig};
-use lindera_core::LinderaResult;
+use lindera::LinderaResult;
 
 use crate::stream::LinderaTokenStream;
 
@@ -53,9 +53,8 @@ impl Tokenizer for LinderaTokenizer {
 mod tests {
     use tantivy::tokenizer::{BoxTokenStream, Token, Tokenizer};
 
+    use lindera::mode::{Mode, Penalty};
     use lindera::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
-    use lindera_core::viterbi::Mode;
-    use lindera_core::viterbi::Penalty;
 
     use crate::tokenizer::LinderaTokenizer;
 

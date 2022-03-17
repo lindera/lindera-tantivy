@@ -4,14 +4,11 @@ use criterion::{criterion_group, criterion_main};
 #[cfg(feature = "ipadic")]
 fn bench_indexing(c: &mut Criterion) {
     use tantivy::doc;
-    use tantivy::schema::IndexRecordOption;
-    use tantivy::schema::Schema;
-    use tantivy::schema::TextFieldIndexing;
-    use tantivy::schema::TextOptions;
+    use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
     use tantivy::Index;
 
+    use lindera::mode::{Mode, Penalty};
     use lindera::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
-    use lindera_core::viterbi::{Mode, Penalty};
     use lindera_tantivy::tokenizer::LinderaTokenizer;
 
     // create schema builder
