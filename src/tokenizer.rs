@@ -53,8 +53,7 @@ impl Tokenizer for LinderaTokenizer {
 mod tests {
     use tantivy::tokenizer::{BoxTokenStream, Token, Tokenizer};
 
-    use lindera::mode::Mode;
-    use lindera::mode::Penalty;
+    use lindera::mode::{Mode, Penalty};
     use lindera::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
 
     use crate::tokenizer::LinderaTokenizer;
