@@ -56,7 +56,7 @@ fn main() -> tantivy::Result<()> {
     let index = Index::create_in_ram(schema.clone());
 
     let config = TokenizerConfig {
-        dict_type: DictionaryType::Kodic,
+        dict_type: DictionaryType::KoDic,
         dict_path: None,
         user_dict_path: None,
         user_dict_type: UserDictionaryType::Csv,
