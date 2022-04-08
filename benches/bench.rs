@@ -7,9 +7,9 @@ fn bench_indexing(c: &mut Criterion) {
     use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
     use tantivy::Index;
 
-    use lindera::mode::{Mode, Penalty};
-    use lindera::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
+    use lindera_tantivy::mode::{Mode, Penalty};
     use lindera_tantivy::tokenizer::LinderaTokenizer;
+    use lindera_tantivy::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
 
     // create schema builder
     let mut schema_builder = Schema::builder();
