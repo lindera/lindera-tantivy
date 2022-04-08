@@ -1,11 +1,17 @@
-use tantivy::tokenizer::{BoxTokenStream, Tokenizer};
+use tantivy::tokenizer::{BoxTokenStream, Tokenizer as TTokenizer};
 
-use lindera::tokenizer::{Tokenizer as LTokenizer, TokenizerConfig};
-use lindera::LinderaResult;
+use lindera::tokenizer::{
+    DictionaryType as LDictionaryType, Tokenizer as LTokenizer,
+    TokenizerConfig as LTokenizerConfig, UserDictionaryType as LUserDictionaryType,
+};
 
 use crate::stream::LinderaTokenStream;
+use crate::LinderaResult;
 
-/// Tokenize text with the specified mode and dictionary.
+pub type DictionaryType = LDictionaryType;
+pub type UserDictionaryType = LUserDictionaryType;
+pub type TokenizerConfig = LTokenizerConfig;
+
 pub struct LinderaTokenizer {
     pub tokenizer: LTokenizer,
 }
@@ -32,7 +38,7 @@ impl LinderaTokenizer {
     }
 }
 
-impl Tokenizer for LinderaTokenizer {
+impl TTokenizer for LinderaTokenizer {
     fn token_stream<'a>(&self, text: &'a str) -> BoxTokenStream<'a> {
         let result = match self.tokenizer.tokenize(text) {
             Ok(result) => result,
@@ -53,10 +59,8 @@ impl Tokenizer for LinderaTokenizer {
 mod tests {
     use tantivy::tokenizer::{BoxTokenStream, Token, Tokenizer};
 
-    use lindera::mode::{Mode, Penalty};
-    use lindera::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
-
-    use crate::tokenizer::LinderaTokenizer;
+    use crate::mode::{Mode, Penalty};
+    use crate::tokenizer::{DictionaryType, LinderaTokenizer, TokenizerConfig, UserDictionaryType};
 
     fn test_helper(mut tokenizer: BoxTokenStream) -> Vec<Token> {
         let mut tokens: Vec<Token> = vec![];
