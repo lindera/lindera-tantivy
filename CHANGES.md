@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.13.3 (2022-04-08)
+- Add compress feature #49 @mosuka
+
 ## 0.13.2 (2022-04-08)
 - Update Lindera to 0.13.2 #48 @mosuka
 
