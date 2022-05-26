@@ -21,7 +21,7 @@ cc-cedict = ["lindera/cc-cedict"]  # Chinese dictionary
 compress = ["lindera/compress"]
 
 [dependencies]
-tantivy = "0.17"
+tantivy = "0.18"
 
 lindera = "0.13.5"
 
