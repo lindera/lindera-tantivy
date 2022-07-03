@@ -1,14 +1,14 @@
 #[cfg(feature = "ko-dic")]
 fn main() -> tantivy::Result<()> {
+    use lindera_tantivy::mode::Mode;
+    use lindera_tantivy::tokenizer::{
+        DictionaryConfig, DictionaryKind, LinderaTokenizer, TokenizerConfig,
+    };
     use tantivy::collector::TopDocs;
     use tantivy::doc;
     use tantivy::query::QueryParser;
     use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
     use tantivy::Index;
-
-    use lindera_tantivy::mode::{Mode, Penalty};
-    use lindera_tantivy::tokenizer::LinderaTokenizer;
-    use lindera_tantivy::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
 
     // create schema builder
     let mut schema_builder = Schema::builder();
@@ -55,12 +55,15 @@ fn main() -> tantivy::Result<()> {
     // create index on memory
     let index = Index::create_in_ram(schema.clone());
 
+    let dictionary = DictionaryConfig {
+        kind: DictionaryKind::KoDic,
+        path: None,
+    };
+
     let config = TokenizerConfig {
-        dict_type: DictionaryType::KoDic,
-        dict_path: None,
-        user_dict_path: None,
-        user_dict_type: UserDictionaryType::Csv,
-        mode: Mode::Decompose(Penalty::default()),
+        dictionary,
+        user_dictionary: None,
+        mode: Mode::Normal,
     };
 
     // register Lindera tokenizer

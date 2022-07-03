@@ -1,15 +1,14 @@
-use tantivy::tokenizer::{BoxTokenStream, Tokenizer as TTokenizer};
-
 use lindera::tokenizer::{
-    DictionaryType as LDictionaryType, Tokenizer as LTokenizer,
-    TokenizerConfig as LTokenizerConfig, UserDictionaryType as LUserDictionaryType,
+    DictionaryConfig as LDictionaryConfig, DictionaryKind as LDictionaryKind,
+    Tokenizer as LTokenizer, TokenizerConfig as LTokenizerConfig,
 };
+use tantivy::tokenizer::{BoxTokenStream, Tokenizer as TTokenizer};
 
 use crate::stream::LinderaTokenStream;
 use crate::LinderaResult;
 
-pub type DictionaryType = LDictionaryType;
-pub type UserDictionaryType = LUserDictionaryType;
+pub type DictionaryConfig = LDictionaryConfig;
+pub type DictionaryKind = LDictionaryKind;
 pub type TokenizerConfig = LTokenizerConfig;
 
 pub struct LinderaTokenizer {
@@ -59,8 +58,8 @@ impl TTokenizer for LinderaTokenizer {
 mod tests {
     use tantivy::tokenizer::{BoxTokenStream, Token, Tokenizer};
 
-    use crate::mode::{Mode, Penalty};
-    use crate::tokenizer::{DictionaryType, LinderaTokenizer, TokenizerConfig, UserDictionaryType};
+    use crate::mode::Mode;
+    use crate::tokenizer::{DictionaryConfig, DictionaryKind, LinderaTokenizer, TokenizerConfig};
 
     fn test_helper(mut tokenizer: BoxTokenStream) -> Vec<Token> {
         let mut tokens: Vec<Token> = vec![];
@@ -70,12 +69,15 @@ mod tests {
 
     #[test]
     fn test_tokenizer_equal() {
+        let dictionary = DictionaryConfig {
+            kind: DictionaryKind::IPADIC,
+            path: None,
+        };
+
         let config = TokenizerConfig {
-            dict_type: DictionaryType::Ipadic,
-            dict_path: None,
-            user_dict_path: None,
-            user_dict_type: UserDictionaryType::Csv,
-            mode: Mode::Decompose(Penalty::default()),
+            dictionary,
+            user_dictionary: None,
+            mode: Mode::Normal,
         };
 
         let tokens = test_helper(

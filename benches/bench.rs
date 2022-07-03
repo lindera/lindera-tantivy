@@ -7,9 +7,9 @@ fn bench_indexing(c: &mut Criterion) {
     use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
     use tantivy::Index;
 
-    use lindera_tantivy::mode::{Mode, Penalty};
+    use lindera_tantivy::mode::Mode;
     use lindera_tantivy::tokenizer::LinderaTokenizer;
-    use lindera_tantivy::tokenizer::{DictionaryType, TokenizerConfig, UserDictionaryType};
+    use lindera_tantivy::tokenizer::{DictionaryConfig, DictionaryKind, TokenizerConfig};
 
     // create schema builder
     let mut schema_builder = Schema::builder();
@@ -44,12 +44,15 @@ fn bench_indexing(c: &mut Criterion) {
     // create index on memory
     let index = Index::create_in_ram(schema.clone());
 
+    let dictionary = DictionaryConfig {
+        kind: DictionaryKind::IPADIC,
+        path: None,
+    };
+
     let config = TokenizerConfig {
-        dict_type: DictionaryType::Ipadic,
-        dict_path: None,
-        user_dict_path: None,
-        user_dict_type: UserDictionaryType::Csv,
-        mode: Mode::Decompose(Penalty::default()),
+        dictionary,
+        user_dictionary: None,
+        mode: Mode::Normal,
     };
 
     // register Lindera tokenizer
