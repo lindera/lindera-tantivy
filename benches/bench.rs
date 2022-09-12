@@ -55,6 +55,16 @@ fn bench_indexing(c: &mut Criterion) {
         mode: Mode::Normal,
     };
 
+    // Test document set.
+    let mut docs = Vec::new();
+    for i in 0..1000 {
+        let doc = doc!(
+            id => format!("doc-{}", i),
+            text => "成田国際空港（なりたこくさいくうこう、英: Narita International Airport）は、千葉県成田市南東部から芝山町北部にかけて建設された日本最大の国際拠点空港である[1]。首都圏東部（東京の東60km）に位置している。空港コードはNRT。"
+        );
+        docs.push(doc);
+    }
+
     // register Lindera tokenizer
     index
         .tokenizers()
@@ -68,11 +78,9 @@ fn bench_indexing(c: &mut Criterion) {
     group.sample_size(100);
     group.bench_function("bench-indexing", |b| {
         b.iter(|| {
-            // add document
-            index_writer.add_document(doc!(
-                id => "1",
-                text => "成田国際空港（なりたこくさいくうこう、英: Narita International Airport）は、千葉県成田市南東部から芝山町北部にかけて建設された日本最大の国際拠点空港である[1]。首都圏東部（東京の東60km）に位置している。空港コードはNRT。"
-                ))
+            for doc in docs.iter() {
+                index_writer.add_document(doc.clone()).unwrap();
+            }
         });
 
         // commit
