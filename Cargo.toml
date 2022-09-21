@@ -1,6 +1,6 @@
 [package]
 name = "lindera-tantivy"
-version = "0.16.0"
+version = "0.16.2"
 edition = "2021"
 description = "Lindera Tokenizer for Tantivy."
 documentation = "https://docs.rs/lindera-tantivy"
@@ -24,10 +24,10 @@ compress = ["lindera/compress"]
 [dependencies]
 tantivy = "0.18.0"
 
-lindera = "0.16.0"
+lindera = "0.16.2"
 
 [dev-dependencies]
-criterion = "0.3.5"
+criterion = { version = "0.4.0", features = ["html_reports"] }
 
 [[bench]]
 name = "bench"
