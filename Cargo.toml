@@ -1,6 +1,6 @@
 [package]
 name = "lindera-tantivy"
-version = "0.16.2"
+version = "0.18.0"
 edition = "2021"
 description = "Lindera Tokenizer for Tantivy."
 documentation = "https://docs.rs/lindera-tantivy"
