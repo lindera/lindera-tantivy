@@ -1,8 +1,12 @@
-use lindera::tokenizer::{
-    DictionaryConfig as LDictionaryConfig, DictionaryKind as LDictionaryKind,
-    Tokenizer as LTokenizer, TokenizerConfig as LTokenizerConfig,
-};
 use tantivy::tokenizer::{BoxTokenStream, Tokenizer as TTokenizer};
+
+use lindera::{
+    tokenizer::{
+        DictionaryConfig as LDictionaryConfig, Tokenizer as LTokenizer,
+        TokenizerConfig as LTokenizerConfig,
+    },
+    DictionaryKind as LDictionaryKind, Token as LToken,
+};
 
 use crate::stream::LinderaTokenStream;
 use crate::LinderaResult;
@@ -10,6 +14,7 @@ use crate::LinderaResult;
 pub type DictionaryConfig = LDictionaryConfig;
 pub type DictionaryKind = LDictionaryKind;
 pub type TokenizerConfig = LTokenizerConfig;
+pub type Token<'a> = LToken<'a>;
 
 pub struct LinderaTokenizer {
     pub tokenizer: LTokenizer,
@@ -70,7 +75,7 @@ mod tests {
     #[test]
     fn test_tokenizer_equal() {
         let dictionary = DictionaryConfig {
-            kind: DictionaryKind::IPADIC,
+            kind: Some(DictionaryKind::IPADIC),
             path: None,
         };
 
