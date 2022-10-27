@@ -45,7 +45,7 @@ fn bench_indexing(c: &mut Criterion) {
     let index = Index::create_in_ram(schema.clone());
 
     let dictionary = DictionaryConfig {
-        kind: DictionaryKind::IPADIC,
+        kind: Some(DictionaryKind::IPADIC),
         path: None,
     };
 

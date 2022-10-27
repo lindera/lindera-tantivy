@@ -1,6 +1,6 @@
 use tantivy::tokenizer::{Token, TokenStream};
 
-use lindera::tokenizer::Token as LToken;
+use crate::tokenizer::Token as LToken;
 
 pub struct LinderaTokenStream<'a> {
     pub result: Vec<LToken<'a>>,

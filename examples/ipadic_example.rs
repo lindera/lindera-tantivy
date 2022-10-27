@@ -1,14 +1,15 @@
 #[cfg(feature = "ipadic")]
 fn main() -> tantivy::Result<()> {
-    use lindera_tantivy::mode::Mode;
-    use lindera_tantivy::tokenizer::{
-        DictionaryConfig, DictionaryKind, LinderaTokenizer, TokenizerConfig,
-    };
     use tantivy::collector::TopDocs;
     use tantivy::doc;
     use tantivy::query::QueryParser;
     use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
     use tantivy::Index;
+
+    use lindera_tantivy::mode::Mode;
+    use lindera_tantivy::tokenizer::{
+        DictionaryConfig, DictionaryKind, LinderaTokenizer, TokenizerConfig,
+    };
 
     // create schema builder
     let mut schema_builder = Schema::builder();
@@ -56,7 +57,7 @@ fn main() -> tantivy::Result<()> {
     let index = Index::create_in_ram(schema.clone());
 
     let dictionary = DictionaryConfig {
-        kind: DictionaryKind::IPADIC,
+        kind: Some(DictionaryKind::IPADIC),
         path: None,
     };
 
