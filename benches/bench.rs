@@ -53,6 +53,7 @@ fn bench_indexing(c: &mut Criterion) {
         dictionary,
         user_dictionary: None,
         mode: Mode::Normal,
+        with_details: false,
     };
 
     // Test document set.
@@ -68,7 +69,7 @@ fn bench_indexing(c: &mut Criterion) {
     // register Lindera tokenizer
     index
         .tokenizers()
-        .register("lang_ja", LinderaTokenizer::with_config(config).unwrap());
+        .register("lang_ja", LinderaTokenizer::from_config(config).unwrap());
 
     // create index writer
     let mut index_writer = index.writer(50_000_000).unwrap();

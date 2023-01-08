@@ -1,6 +1,7 @@
 use tantivy::tokenizer::{BoxTokenStream, Tokenizer as TTokenizer};
 
 use lindera::{
+    builder,
     tokenizer::{
         DictionaryConfig as LDictionaryConfig, Tokenizer as LTokenizer,
         TokenizerConfig as LTokenizerConfig,
@@ -8,8 +9,8 @@ use lindera::{
     DictionaryKind as LDictionaryKind, Token as LToken,
 };
 
-use crate::stream::LinderaTokenStream;
 use crate::LinderaResult;
+use crate::{mode::Mode, stream::LinderaTokenStream};
 
 pub type DictionaryConfig = LDictionaryConfig;
 pub type DictionaryKind = LDictionaryKind;
@@ -30,14 +31,16 @@ impl Clone for LinderaTokenizer {
 
 impl LinderaTokenizer {
     pub fn new() -> LinderaResult<LinderaTokenizer> {
+        let dictionary = builder::load_dictionary_from_kind(DictionaryKind::IPADIC)?;
+
         Ok(LinderaTokenizer {
-            tokenizer: LTokenizer::new()?,
+            tokenizer: LTokenizer::new(dictionary, None, Mode::Normal, false),
         })
     }
 
-    pub fn with_config(config: TokenizerConfig) -> LinderaResult<LinderaTokenizer> {
+    pub fn from_config(config: TokenizerConfig) -> LinderaResult<LinderaTokenizer> {
         Ok(LinderaTokenizer {
-            tokenizer: LTokenizer::with_config(config)?,
+            tokenizer: LTokenizer::from_config(config)?,
         })
     }
 }
@@ -83,10 +86,11 @@ mod tests {
             dictionary,
             user_dictionary: None,
             mode: Mode::Normal,
+            with_details: false,
         };
 
         let tokens = test_helper(
-            LinderaTokenizer::with_config(config)
+            LinderaTokenizer::from_config(config)
                 .unwrap()
                 .token_stream("すもももももももものうち"),
         );

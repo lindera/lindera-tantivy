@@ -65,12 +65,13 @@ fn main() -> tantivy::Result<()> {
         dictionary,
         user_dictionary: None,
         mode: Mode::Normal,
+        with_details: false,
     };
 
     // register Lindera tokenizer
     index
         .tokenizers()
-        .register("lang_zh", LinderaTokenizer::with_config(config).unwrap());
+        .register("lang_zh", LinderaTokenizer::from_config(config).unwrap());
 
     // create index writer
     let mut index_writer = index.writer(50_000_000)?;
