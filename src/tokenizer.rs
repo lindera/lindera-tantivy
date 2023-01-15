@@ -34,7 +34,7 @@ impl LinderaTokenizer {
         let dictionary = builder::load_dictionary_from_kind(DictionaryKind::IPADIC)?;
 
         Ok(LinderaTokenizer {
-            tokenizer: LTokenizer::new(dictionary, None, Mode::Normal, false),
+            tokenizer: LTokenizer::new(dictionary, None, Mode::Normal),
         })
     }
 
@@ -48,7 +48,10 @@ impl LinderaTokenizer {
 impl TTokenizer for LinderaTokenizer {
     fn token_stream<'a>(&self, text: &'a str) -> BoxTokenStream<'a> {
         let result = match self.tokenizer.tokenize(text) {
-            Ok(result) => result,
+            Ok(result) => result
+                .iter()
+                .map(|token| token.get_text().to_string())
+                .collect(),
             Err(_err) => Vec::new(),
         };
 
@@ -86,7 +89,6 @@ mod tests {
             dictionary,
             user_dictionary: None,
             mode: Mode::Normal,
-            with_details: false,
         };
 
         let tokens = test_helper(

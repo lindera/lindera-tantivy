@@ -1,6 +1,6 @@
 [package]
 name = "lindera-tantivy"
-version = "0.19.1"
+version = "0.20.0"
 edition = "2021"
 description = "Lindera Tokenizer for Tantivy."
 documentation = "https://docs.rs/lindera-tantivy"
@@ -22,9 +22,10 @@ cc-cedict = ["lindera/cc-cedict"]  # Chinese dictionary
 compress = ["lindera/compress"]
 
 [dependencies]
-tantivy = "0.19.0"
+tantivy = "0.19.1"
 
-lindera = "0.19.5"
+# lindera = "0.19.5"
+lindera = { version = "0.20.0", path = "../lindera/lindera" }
 
 [dev-dependencies]
 criterion = { version = "0.4.0", features = ["html_reports"] }

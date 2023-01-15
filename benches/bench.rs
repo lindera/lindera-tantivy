@@ -53,7 +53,6 @@ fn bench_indexing(c: &mut Criterion) {
         dictionary,
         user_dictionary: None,
         mode: Mode::Normal,
-        with_details: false,
     };
 
     // Test document set.
