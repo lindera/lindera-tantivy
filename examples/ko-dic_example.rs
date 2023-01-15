@@ -65,7 +65,6 @@ fn main() -> tantivy::Result<()> {
         dictionary,
         user_dictionary: None,
         mode: Mode::Normal,
-        with_details: false,
     };
 
     // register Lindera tokenizer
