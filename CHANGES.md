@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 0.20.0 (2023-01-16)
 - Update dependencies #67 @mosuka
 
 ## 0.19.1 (2023-01-08)
