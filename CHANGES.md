@@ -2,7 +2,7 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
-## Unreleased
+## 0.21.0 (2023-01-23)
 - Use Lindera Analyzer instead of Lindera Tokenizer #68 @mosuka
 
 ## 0.20.0 (2023-01-16)
