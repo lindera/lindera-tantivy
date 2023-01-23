@@ -24,15 +24,15 @@ lindera-tantivy = { version = "0.12.0", features = ["ipadic"] }
 ### Basic example
 
 ```rust
-use lindera_tantivy::mode::Mode;
-use lindera_tantivy::tokenizer::{
-    DictionaryConfig, DictionaryKind, LinderaTokenizer, TokenizerConfig,
+use tantivy::{
+    collector::TopDocs,
+    doc,
+    query::QueryParser,
+    schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions},
+    Index,
 };
-use tantivy::collector::TopDocs;
-use tantivy::doc;
-use tantivy::query::QueryParser;
-use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
-use tantivy::Index;
+
+use lindera_tantivy::tokenizer::LinderaTokenizer;
 
 fn main() -> tantivy::Result<()> {
     // create schema builder
@@ -80,22 +80,10 @@ fn main() -> tantivy::Result<()> {
     // create index on memory
     let index = Index::create_in_ram(schema.clone());
 
-    let dictionary = DictionaryConfig {
-        kind: DictionaryKind::IPADIC,
-        path: None,
-    };
-
-    let config = TokenizerConfig {
-        dictionary,
-        user_dictionary: None,
-        mode: Mode::Normal,
-        with_details: false,
-    };
-
     // register Lindera tokenizer
     index
         .tokenizers()
-        .register("lang_ja", LinderaTokenizer::from_config(config).unwrap());
+        .register("lang_ja", LinderaTokenizer::default());
 
     // create index writer
     let mut index_writer = index.writer(50_000_000)?;
