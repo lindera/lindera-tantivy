@@ -186,8 +186,9 @@ mod tests {
 
     #[test]
     fn test_tokenizer_lindera() {
-        let tokens =
-            test_helper(LinderaTokenizer::default().token_stream("Ｌｉｎｄｅｒａは形態素解析ｴﾝｼﾞﾝです。"));
+        let tokens = test_helper(
+            LinderaTokenizer::default().token_stream("Ｌｉｎｄｅｒａは形態素解析ｴﾝｼﾞﾝです。"),
+        );
         assert_eq!(tokens.len(), 7);
         {
             let token = &tokens[0];
@@ -240,7 +241,7 @@ mod tests {
         {
             let token = &tokens[6];
             assert_eq!(token.text, "。");
-            assert_eq!(token.offset_from,  60);
+            assert_eq!(token.offset_from, 60);
             assert_eq!(token.offset_to, 63);
             assert_eq!(token.position, 6);
             assert_eq!(token.position_length, 1);
