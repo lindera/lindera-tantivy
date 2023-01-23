@@ -1,14 +1,17 @@
 #[cfg(feature = "cc-cedict")]
 fn main() -> tantivy::Result<()> {
-    use tantivy::collector::TopDocs;
-    use tantivy::doc;
-    use tantivy::query::QueryParser;
-    use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
-    use tantivy::Index;
+    use tantivy::{
+        collector::TopDocs,
+        doc,
+        query::QueryParser,
+        schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions},
+        Index,
+    };
 
-    use lindera_tantivy::mode::Mode;
-    use lindera_tantivy::tokenizer::{
-        DictionaryConfig, DictionaryKind, LinderaTokenizer, TokenizerConfig,
+    use lindera::tokenizer::Tokenizer;
+    use lindera_tantivy::{
+        mode::Mode,
+        tokenizer::{DictionaryConfig, DictionaryKind, LinderaTokenizer, TokenizerConfig},
     };
 
     // create schema builder
@@ -67,10 +70,13 @@ fn main() -> tantivy::Result<()> {
         mode: Mode::Normal,
     };
 
+    let tokenizer = Tokenizer::from_config(config).unwrap();
+
     // register Lindera tokenizer
-    index
-        .tokenizers()
-        .register("lang_zh", LinderaTokenizer::from_config(config).unwrap());
+    index.tokenizers().register(
+        "lang_zh",
+        LinderaTokenizer::new(Vec::new(), tokenizer, Vec::new()),
+    );
 
     // create index writer
     let mut index_writer = index.writer(50_000_000)?;

@@ -7,9 +7,7 @@ fn bench_indexing(c: &mut Criterion) {
     use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
     use tantivy::Index;
 
-    use lindera_tantivy::mode::Mode;
     use lindera_tantivy::tokenizer::LinderaTokenizer;
-    use lindera_tantivy::tokenizer::{DictionaryConfig, DictionaryKind, TokenizerConfig};
 
     // create schema builder
     let mut schema_builder = Schema::builder();
@@ -44,17 +42,6 @@ fn bench_indexing(c: &mut Criterion) {
     // create index on memory
     let index = Index::create_in_ram(schema.clone());
 
-    let dictionary = DictionaryConfig {
-        kind: Some(DictionaryKind::IPADIC),
-        path: None,
-    };
-
-    let config = TokenizerConfig {
-        dictionary,
-        user_dictionary: None,
-        mode: Mode::Normal,
-    };
-
     // Test document set.
     let mut docs = Vec::new();
     for i in 0..1000 {
@@ -68,7 +55,7 @@ fn bench_indexing(c: &mut Criterion) {
     // register Lindera tokenizer
     index
         .tokenizers()
-        .register("lang_ja", LinderaTokenizer::from_config(config).unwrap());
+        .register("lang_ja", LinderaTokenizer::default());
 
     // create index writer
     let mut index_writer = index.writer(50_000_000).unwrap();
