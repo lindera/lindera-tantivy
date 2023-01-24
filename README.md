@@ -24,6 +24,8 @@ lindera-tantivy = { version = "0.12.0", features = ["ipadic"] }
 ### Basic example
 
 ```rust
+use std::collections::HashSet;
+
 use tantivy::{
     collector::TopDocs,
     doc,
@@ -32,6 +34,22 @@ use tantivy::{
     Index,
 };
 
+use lindera::{
+    builder,
+    character_filter::unicode_normalize::{
+        UnicodeNormalizeCharacterFilter, UnicodeNormalizeCharacterFilterConfig,
+        UnicodeNormalizeKind,
+    },
+    mode::Mode,
+    token_filter::{
+        japanese_compound_word::{
+            JapaneseCompoundWordTokenFilter, JapaneseCompoundWordTokenFilterConfig,
+        },
+        japanese_number::{JapaneseNumberTokenFilter, JapaneseNumberTokenFilterConfig},
+    },
+    tokenizer::Tokenizer,
+    BoxCharacterFilter, BoxTokenFilter, DictionaryKind,
+};
 use lindera_tantivy::tokenizer::LinderaTokenizer;
 
 fn main() -> tantivy::Result<()> {
@@ -80,10 +98,42 @@ fn main() -> tantivy::Result<()> {
     // create index on memory
     let index = Index::create_in_ram(schema.clone());
 
+    // Character filters.
+    // Filters are executed in the order in which they are added.
+    // Character filters are performed before the text is tokenized in the tokenizer.
+    let mut character_filters: Vec<BoxCharacterFilter> = Vec::new();
+    // Unicode normalize character filter
+    character_filters.push(BoxCharacterFilter::from(
+        UnicodeNormalizeCharacterFilter::new(UnicodeNormalizeCharacterFilterConfig::new(
+            UnicodeNormalizeKind::NFKC,
+        )),
+    ));
+
+    // Tokenizer with IPADIC
+    let dictionary = builder::load_dictionary_from_kind(DictionaryKind::IPADIC).unwrap();
+    let tokenizer = LTokenizer::new(dictionary, None, Mode::Normal);
+
+    // Token filters.
+    // Filters are executed in the order in which they are added.
+    // Token filters are performed after the text is tokenized in the tokenizer.
+    let mut token_filters: Vec<BoxTokenFilter> = Vec::new();
+    // Japanese compound word token filter
+    token_filters.push(BoxTokenFilter::from(JapaneseCompoundWordTokenFilter::new(
+        JapaneseCompoundWordTokenFilterConfig::new(
+            DictionaryKind::IPADIC,
+            HashSet::from(["名詞,数".to_string()]),
+            Some("名詞,数".to_string()),
+        ),
+    )));
+    // Japanese number token filter
+    token_filters.push(BoxTokenFilter::from(JapaneseNumberTokenFilter::new(
+        JapaneseNumberTokenFilterConfig::new(Some(HashSet::from(["名詞,数".to_string()]))),
+    )));
+
     // register Lindera tokenizer
     index
         .tokenizers()
-        .register("lang_ja", LinderaTokenizer::default());
+        .register("lang_ja", LinderaTokenizer::new(character_filters, tokenizer, token_filters));
 
     // create index writer
     let mut index_writer = index.writer(50_000_000)?;
