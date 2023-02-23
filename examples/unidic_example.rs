@@ -8,10 +8,9 @@ fn main() -> tantivy::Result<()> {
         Index,
     };
 
-    use lindera::tokenizer::Tokenizer;
     use lindera_tantivy::{
-        mode::Mode,
-        tokenizer::{DictionaryConfig, DictionaryKind, LinderaTokenizer, TokenizerConfig},
+        dictionary::load_dictionary, tokenizer::LinderaTokenizer, DictionaryConfig, DictionaryKind,
+        Mode,
     };
 
     // create schema builder
@@ -59,24 +58,16 @@ fn main() -> tantivy::Result<()> {
     // create index on memory
     let index = Index::create_in_ram(schema.clone());
 
-    let dictionary = DictionaryConfig {
+    // Tokenizer with UniDic
+    let dictionary_config = DictionaryConfig {
         kind: Some(DictionaryKind::UniDic),
         path: None,
     };
-
-    let config = TokenizerConfig {
-        dictionary,
-        user_dictionary: None,
-        mode: Mode::Normal,
-    };
-
-    let tokenizer = Tokenizer::from_config(config).unwrap();
+    let dictionary = load_dictionary(dictionary_config).unwrap();
+    let tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
 
     // register Lindera tokenizer
-    index.tokenizers().register(
-        "lang_ja",
-        LinderaTokenizer::new(Vec::new(), tokenizer, Vec::new()),
-    );
+    index.tokenizers().register("lang_ja", tokenizer);
 
     // create index writer
     let mut index_writer = index.writer(50_000_000)?;
