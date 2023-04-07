@@ -25,7 +25,7 @@ cc-cedict-compress = ["lindera/cc-cedict-compress"]
 [dependencies]
 tantivy = "0.19.2"
 
-lindera = "0.23.0"
+lindera = "0.23.1"
 
 [dev-dependencies]
 criterion = { version = "0.4.0", features = ["html_reports"] }
