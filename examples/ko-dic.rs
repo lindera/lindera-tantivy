@@ -1,4 +1,4 @@
-#[cfg(feature = "cc-cedict")]
+#[cfg(feature = "ko-dic")]
 fn main() -> tantivy::Result<()> {
     use tantivy::{
         collector::TopDocs,
@@ -8,10 +8,9 @@ fn main() -> tantivy::Result<()> {
         Index,
     };
 
-    use lindera_tantivy::{
-        dictionary::load_dictionary, tokenizer::LinderaTokenizer, DictionaryConfig, DictionaryKind,
-        Mode,
-    };
+    use lindera_core::mode::Mode;
+    use lindera_dictionary::{load_dictionary_from_config, DictionaryConfig, DictionaryKind};
+    use lindera_tantivy::tokenizer::LinderaTokenizer;
 
     // create schema builder
     let mut schema_builder = Schema::builder();
@@ -34,7 +33,7 @@ fn main() -> tantivy::Result<()> {
         TextOptions::default()
             .set_indexing_options(
                 TextFieldIndexing::default()
-                    .set_tokenizer("lang_zh")
+                    .set_tokenizer("lang_ko")
                     .set_index_option(IndexRecordOption::WithFreqsAndPositions),
             )
             .set_stored(),
@@ -46,7 +45,7 @@ fn main() -> tantivy::Result<()> {
         TextOptions::default()
             .set_indexing_options(
                 TextFieldIndexing::default()
-                    .set_tokenizer("lang_zh")
+                    .set_tokenizer("lang_ko")
                     .set_index_option(IndexRecordOption::WithFreqsAndPositions),
             )
             .set_stored(),
@@ -58,16 +57,16 @@ fn main() -> tantivy::Result<()> {
     // create index on memory
     let index = Index::create_in_ram(schema.clone());
 
-    // Tokenizer with CC-CEDICT
+    // Tokenizer with ko-dic
     let dictionary_config = DictionaryConfig {
-        kind: Some(DictionaryKind::CcCedict),
+        kind: Some(DictionaryKind::KoDic),
         path: None,
     };
-    let dictionary = load_dictionary(dictionary_config).unwrap();
+    let dictionary = load_dictionary_from_config(dictionary_config).unwrap();
     let tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
 
     // register Lindera tokenizer
-    index.tokenizers().register("lang_zh", tokenizer);
+    index.tokenizers().register("lang_ko", tokenizer);
 
     // create index writer
     let mut index_writer = index.writer(50_000_000)?;
@@ -75,22 +74,22 @@ fn main() -> tantivy::Result<()> {
     // add document
     index_writer.add_document(doc!(
     id => "1",
-    title => "成田国际机场",
-    body => "成田國際機場（日语：成田国際空港／なりたこくさいくうこう Narita Kokusai Kūkō */?；IATA代码：NRT；ICAO代码：RJAA），通稱成田機場（成田空港），原名新東京國際機場（新東京国際空港／しんとうきょうこくさいくうこう Shin-Tōkyō Kokusai Kūkō），是位於日本千葉縣成田市的國際機場，與羽田機場並列為東京兩大聯外機場。占地1,111公頃，擁有3座客運航廈，客運流量居日本第二位，貨運吞吐量則居日本第一、全球第九。根據日本機場分類法，其劃分為據點機場。"
+    title => "나리타 국제공항",
+    body => "나리타 국제공항(일본어: 成田国際空港, 영어: Narita International Airport, IATA: NRT, ICAO: RJAA)은 일본 지바현 나리타시에 위치한 국제공항으로, 도쿄도 도심에서 동북쪽으로 약 62km 떨어져 있다."
     )).unwrap();
 
     // add document
     index_writer.add_document(doc!(
     id => "2",
-    title => "東京國際機場",
-    body => "東京國際機場（日语：東京国際空港／とうきょうこくさいくうこう Tōkyō Kokusai Kūkō */?；IATA代码：HND；ICAO代码：RJTT）是位於日本東京都大田區的機場，因座落於羽田地區而通稱為羽田機場（羽田空港／はねだくうこう Haneda Kūkō），啟用於1931年8月25日，與成田國際機場並列為東京兩大聯外機場。"
+    title => "도쿄 국제공항",
+    body => "도쿄국제공항(일본어: 東京国際空港、とうきょうこくさいくうこう, 영어: Tokyo International Airport)은 일본 도쿄도 오타구에 있는 공항이다. 보통 이 일대의 옛 지명을 본뜬 하네다 공항(일본어: 羽田空港, 영어: Haneda Airport)이라고 불린다."
     )).unwrap();
 
     // add document
     index_writer.add_document(doc!(
     id => "3",
-    title => "关西国际机场",
-    body => "關西國際機場（日语：関西国際空港／かんさいこくさいくうこう Kansai kokusai kūkō */?，英語：Kansai International Airport，IATA代码：KIX；ICAO代码：RJBB），常通稱為關西機場、大阪關西機場或關空[註 1]，是位於日本大阪府的機場，坐落於大阪湾东南部的泉州近海離岸5公里的人工島上，面積約1,067.7公頃[2]，行政區劃橫跨大阪府的泉佐野市（北）、田尻町（中）以及泉南市（南）。"
+    title => "간사이 국제공항",
+    body => "간사이 국제공항(일본어: 関西国際空港, IATA: KIX, ICAO: RJBB)은 일본 오사카부 오사카 만에 조성된 인공섬에 위치한 일본의 공항으로, 대한민국의 인천국제공항보다 6년 반 앞선 1994년 9월 4일에 개항했다."
     )).unwrap();
 
     // commit
@@ -106,7 +105,7 @@ fn main() -> tantivy::Result<()> {
     let query_parser = QueryParser::for_index(&index, vec![title, body]);
 
     // parse query
-    let query_str = "東京";
+    let query_str = "도쿄";
     let query = query_parser.parse_query(query_str)?;
     println!("Query String: {}", query_str);
 
@@ -121,7 +120,7 @@ fn main() -> tantivy::Result<()> {
     Ok(())
 }
 
-#[cfg(not(feature = "cc-cedict"))]
+#[cfg(not(feature = "ko-dic"))]
 fn main() -> tantivy::Result<()> {
     Ok(())
 }

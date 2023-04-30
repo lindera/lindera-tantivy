@@ -12,14 +12,10 @@ The following example enables IPADIC.
 
 ```
 [dependencies]
-lindera-tantivy = { version = "0.12.0", features = ["ipadic"] }
+lindera-core = "0.24.0"
+lindera-dictionary = "0.24.0"
+lindera-tantivy = { version = "0.24.0", features = ["ipadic"] }
 ```
-
-- ipadic: Japanese dictionary
-- unidic: Japanese dictionary
-- ko-dic: Korean dictionary
-- cc-cedict: Chinese dictionary
-
 
 ### Basic example
 
@@ -32,10 +28,9 @@ use tantivy::{
     Index,
 };
 
-use lindera_tantivy::{
-    dictionary::load_dictionary, tokenizer::LinderaTokenizer, DictionaryConfig, DictionaryKind,
-    Mode,
-};
+use lindera_core::mode::Mode;
+use lindera_dictionary::{load_dictionary_from_config, DictionaryConfig, DictionaryKind};
+use lindera_tantivy::tokenizer::LinderaTokenizer;
 
 fn main() -> tantivy::Result<()> {
     // create schema builder
