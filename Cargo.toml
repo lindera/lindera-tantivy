@@ -1,6 +1,6 @@
 [package]
 name = "lindera-tantivy"
-version = "0.23.1"
+version = "0.24.0"
 edition = "2021"
 description = "Lindera Tokenizer for Tantivy."
 documentation = "https://docs.rs/lindera-tantivy"
@@ -12,20 +12,22 @@ categories = ["text-processing"]
 license = "MIT"
 
 [features]
-default = ["ipadic"]  # Japanese dictionary
-ipadic = ["lindera/ipadic"]  # Japanese dictionary
-unidic = ["lindera/unidic"]  # Japanese dictionary
-ko-dic = ["lindera/ko-dic"]  # Korean dictionary
-cc-cedict = ["lindera/cc-cedict"]  # Chinese dictionary
-ipadic-compress = ["lindera/ipadic-compress"]
-unidic-compress = ["lindera/unidic-compress"]
-ko-dic-compress = ["lindera/ko-dic-compress"]
-cc-cedict-compress = ["lindera/cc-cedict-compress"]
+default = []  # Japanese dictionary
+ipadic = ["lindera-tokenizer/ipadic"]  # Japanese dictionary
+unidic = ["lindera-tokenizer/unidic"]  # Japanese dictionary
+ko-dic = ["lindera-tokenizer/ko-dic"]  # Korean dictionary
+cc-cedict = ["lindera-tokenizer/cc-cedict"]  # Chinese dictionary
+ipadic-compress = ["lindera-tokenizer/ipadic-compress"]
+unidic-compress = ["lindera-tokenizer/unidic-compress"]
+ko-dic-compress = ["lindera-tokenizer/ko-dic-compress"]
+cc-cedict-compress = ["lindera-tokenizer/cc-cedict-compress"]
 
 [dependencies]
 tantivy = "0.19.2"
 
-lindera = "0.23.1"
+lindera-core = "0.24.0"
+lindera-dictionary = "0.24.0"
+lindera-tokenizer = "0.24.0"
 
 [dev-dependencies]
 criterion = { version = "0.4.0", features = ["html_reports"] }

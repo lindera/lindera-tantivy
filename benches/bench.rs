@@ -7,6 +7,8 @@ fn bench_indexing(c: &mut Criterion) {
     use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
     use tantivy::Index;
 
+    use lindera_core::mode::Mode;
+    use lindera_dictionary::{load_dictionary_from_config, DictionaryConfig, DictionaryKind};
     use lindera_tantivy::tokenizer::LinderaTokenizer;
 
     // create schema builder
@@ -52,10 +54,15 @@ fn bench_indexing(c: &mut Criterion) {
         docs.push(doc);
     }
 
+    let dictionary_config = DictionaryConfig {
+        kind: Some(DictionaryKind::IPADIC),
+        path: None,
+    };
+    let dictionary = load_dictionary_from_config(dictionary_config).unwrap();
+    let tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
+
     // register Lindera tokenizer
-    index
-        .tokenizers()
-        .register("lang_ja", LinderaTokenizer::default());
+    index.tokenizers().register("lang_ja", tokenizer);
 
     // create index writer
     let mut index_writer = index.writer(50_000_000).unwrap();

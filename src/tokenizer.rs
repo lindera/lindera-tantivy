@@ -2,12 +2,13 @@ use std::collections::VecDeque;
 
 use tantivy::tokenizer::{BoxTokenStream, Token, Tokenizer};
 
-use lindera::tokenizer::Tokenizer as LTokenizer;
-
-use crate::{
-    dictionary::load_dictionary, stream::LinderaTokenStream, Dictionary, DictionaryConfig,
-    DictionaryKind, Mode, UserDictionary,
+use lindera_core::{
+    dictionary::{Dictionary, UserDictionary},
+    mode::Mode,
 };
+use lindera_tokenizer::tokenizer::Tokenizer as LTokenizer;
+
+use crate::stream::LinderaTokenStream;
 
 pub struct LinderaTokenizer {
     pub tokenizer: LTokenizer,
@@ -30,25 +31,6 @@ impl LinderaTokenizer {
         LinderaTokenizer {
             tokenizer: LTokenizer::new(dictionary, user_dictionary, mode),
         }
-    }
-}
-
-impl Default for LinderaTokenizer {
-    fn default() -> Self {
-        // Dictionary.
-        let dictionary = load_dictionary(DictionaryConfig {
-            kind: Some(DictionaryKind::IPADIC),
-            path: None,
-        })
-        .unwrap();
-
-        // User dictionary.
-        let user_dictionary = None;
-
-        // Mode.
-        let mode = Mode::Normal;
-
-        Self::new(dictionary, user_dictionary, mode)
     }
 }
 
@@ -77,6 +59,9 @@ impl Tokenizer for LinderaTokenizer {
 mod tests {
     use tantivy::tokenizer::{BoxTokenStream, Token, Tokenizer};
 
+    use lindera_core::mode::Mode;
+    use lindera_dictionary::{load_dictionary_from_config, DictionaryConfig, DictionaryKind};
+
     use crate::tokenizer::LinderaTokenizer;
 
     fn test_helper(mut tokenizer: BoxTokenStream) -> Vec<Token> {
@@ -87,8 +72,14 @@ mod tests {
 
     #[test]
     fn test_tokenizer() {
-        let tokens =
-            test_helper(LinderaTokenizer::default().token_stream("すもももももももものうち"));
+        let dictionary_config = DictionaryConfig {
+            kind: Some(DictionaryKind::IPADIC),
+            path: None,
+        };
+        let dictionary = load_dictionary_from_config(dictionary_config).unwrap();
+        let tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
+
+        let tokens = test_helper(tokenizer.token_stream("すもももももももものうち"));
         assert_eq!(tokens.len(), 7);
         {
             let token = &tokens[0];
@@ -150,9 +141,14 @@ mod tests {
 
     #[test]
     fn test_tokenizer_lindera() {
-        let tokens = test_helper(
-            LinderaTokenizer::default().token_stream("Linderaは形態素解析エンジンです。"),
-        );
+        let dictionary_config = DictionaryConfig {
+            kind: Some(DictionaryKind::IPADIC),
+            path: None,
+        };
+        let dictionary = load_dictionary_from_config(dictionary_config).unwrap();
+        let tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
+
+        let tokens = test_helper(tokenizer.token_stream("Linderaは形態素解析エンジンです。"));
         assert_eq!(tokens.len(), 7);
         {
             let token = &tokens[0];

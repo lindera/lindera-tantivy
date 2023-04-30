@@ -8,10 +8,9 @@ fn main() -> tantivy::Result<()> {
         Index,
     };
 
-    use lindera_tantivy::{
-        dictionary::load_dictionary, tokenizer::LinderaTokenizer, DictionaryConfig, DictionaryKind,
-        Mode,
-    };
+    use lindera_core::mode::Mode;
+    use lindera_dictionary::{load_dictionary_from_config, DictionaryConfig, DictionaryKind};
+    use lindera_tantivy::tokenizer::LinderaTokenizer;
 
     // create schema builder
     let mut schema_builder = Schema::builder();
@@ -63,7 +62,7 @@ fn main() -> tantivy::Result<()> {
         kind: Some(DictionaryKind::UniDic),
         path: None,
     };
-    let dictionary = load_dictionary(dictionary_config).unwrap();
+    let dictionary = load_dictionary_from_config(dictionary_config).unwrap();
     let tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
 
     // register Lindera tokenizer
