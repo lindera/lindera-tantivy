@@ -1,6 +1,4 @@
-use std::collections::VecDeque;
-
-use tantivy::tokenizer::{BoxTokenStream, Token, Tokenizer};
+use tantivy::tokenizer::{Token, Tokenizer};
 
 use lindera_core::{
     dictionary::{Dictionary, UserDictionary},
@@ -10,16 +8,10 @@ use lindera_tokenizer::tokenizer::Tokenizer as LTokenizer;
 
 use crate::stream::LinderaTokenStream;
 
+#[derive(Clone)]
 pub struct LinderaTokenizer {
-    pub tokenizer: LTokenizer,
-}
-
-impl Clone for LinderaTokenizer {
-    fn clone(&self) -> Self {
-        Self {
-            tokenizer: self.tokenizer.clone(),
-        }
-    }
+    tokenizer: LTokenizer,
+    token: Token,
 }
 
 impl LinderaTokenizer {
@@ -30,181 +22,176 @@ impl LinderaTokenizer {
     ) -> LinderaTokenizer {
         LinderaTokenizer {
             tokenizer: LTokenizer::new(dictionary, user_dictionary, mode),
+            token: Default::default(),
         }
     }
 }
 
 impl Tokenizer for LinderaTokenizer {
-    fn token_stream<'a>(&self, text: &'a str) -> BoxTokenStream<'a> {
-        let tokens = match self.tokenizer.tokenize(text) {
-            Ok(lindera_tokens) => lindera_tokens
-                .iter()
-                .map(|lindera_token| Token {
-                    offset_from: lindera_token.byte_start,
-                    offset_to: lindera_token.byte_end,
-                    position: lindera_token.position,
-                    text: lindera_token.text.to_string(),
-                    position_length: lindera_token.position_length,
-                })
-                .collect::<VecDeque<_>>(),
-            Err(_err) => VecDeque::new(),
-        };
+    type TokenStream<'a> = LinderaTokenStream<'a>;
 
-        BoxTokenStream::from(LinderaTokenStream::new(tokens))
+    fn token_stream<'a>(&'a mut self, text: &'a str) -> LinderaTokenStream<'a> {
+        self.token.reset();
+        LinderaTokenStream {
+            tokens: self.tokenizer.tokenize(text).unwrap(),
+            token: &mut self.token,
+        }
     }
 }
 
 #[cfg(test)]
-#[cfg(feature = "ipadic")]
+#[cfg(any(
+    feature = "ipadic",
+    feature = "unidic",
+    feature = "ko-dic",
+    feature = "cc-cedict"
+))]
 mod tests {
-    use tantivy::tokenizer::{BoxTokenStream, Token, Tokenizer};
+    use tantivy::tokenizer::{TextAnalyzer, Token};
 
     use lindera_core::mode::Mode;
     use lindera_dictionary::{load_dictionary_from_config, DictionaryConfig, DictionaryKind};
 
-    use crate::tokenizer::LinderaTokenizer;
+    use super::LinderaTokenizer;
 
-    fn test_helper(mut tokenizer: BoxTokenStream) -> Vec<Token> {
+    #[cfg(feature = "ipadic")]
+    fn token_stream_helper_ipadic(text: &str) -> Vec<Token> {
+        let dictionary_config = DictionaryConfig {
+            kind: Some(DictionaryKind::IPADIC),
+            path: None,
+        };
+        let dictionary = load_dictionary_from_config(dictionary_config).unwrap();
+        let tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
+
+        let mut analyzer = TextAnalyzer::from(tokenizer);
+        let mut token_stream = analyzer.token_stream(text);
         let mut tokens: Vec<Token> = vec![];
-        tokenizer.process(&mut |token: &Token| tokens.push(token.clone()));
+        let mut add_token = |token: &Token| {
+            tokens.push(token.clone());
+        };
+        token_stream.process(&mut add_token);
+
         tokens
     }
 
-    #[test]
-    fn test_tokenizer() {
+    #[cfg(feature = "unidic")]
+    fn token_stream_helper_unidic(text: &str) -> Vec<Token> {
         let dictionary_config = DictionaryConfig {
-            kind: Some(DictionaryKind::IPADIC),
+            kind: Some(DictionaryKind::UniDic),
             path: None,
         };
         let dictionary = load_dictionary_from_config(dictionary_config).unwrap();
         let tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
 
-        let tokens = test_helper(tokenizer.token_stream("すもももももももものうち"));
-        assert_eq!(tokens.len(), 7);
-        {
-            let token = &tokens[0];
-            assert_eq!(token.text, "すもも");
-            assert_eq!(token.offset_from, 0);
-            assert_eq!(token.offset_to, 9);
-            assert_eq!(token.position, 0);
-            assert_eq!(token.position_length, 1);
-        }
-        {
-            let token = &tokens[1];
-            assert_eq!(token.text, "も");
-            assert_eq!(token.offset_from, 9);
-            assert_eq!(token.offset_to, 12);
-            assert_eq!(token.position, 1);
-            assert_eq!(token.position_length, 1);
-        }
-        {
-            let token = &tokens[2];
-            assert_eq!(token.text, "もも");
-            assert_eq!(token.offset_from, 12);
-            assert_eq!(token.offset_to, 18);
-            assert_eq!(token.position, 2);
-            assert_eq!(token.position_length, 1);
-        }
-        {
-            let token = &tokens[3];
-            assert_eq!(token.text, "も");
-            assert_eq!(token.offset_from, 18);
-            assert_eq!(token.offset_to, 21);
-            assert_eq!(token.position, 3);
-            assert_eq!(token.position_length, 1);
-        }
-        {
-            let token = &tokens[4];
-            assert_eq!(token.text, "もも");
-            assert_eq!(token.offset_from, 21);
-            assert_eq!(token.offset_to, 27);
-            assert_eq!(token.position, 4);
-            assert_eq!(token.position_length, 1);
-        }
-        {
-            let token = &tokens[5];
-            assert_eq!(token.text, "の");
-            assert_eq!(token.offset_from, 27);
-            assert_eq!(token.offset_to, 30);
-            assert_eq!(token.position, 5);
-            assert_eq!(token.position_length, 1);
-        }
-        {
-            let token = &tokens[6];
-            assert_eq!(token.text, "うち");
-            assert_eq!(token.offset_from, 30);
-            assert_eq!(token.offset_to, 36);
-            assert_eq!(token.position, 6);
-            assert_eq!(token.position_length, 1);
-        }
+        let mut analyzer = TextAnalyzer::from(tokenizer);
+        let mut token_stream = analyzer.token_stream(text);
+        let mut tokens: Vec<Token> = vec![];
+        let mut add_token = |token: &Token| {
+            tokens.push(token.clone());
+        };
+        token_stream.process(&mut add_token);
+
+        tokens
+    }
+
+    #[cfg(feature = "ko-dic")]
+    fn token_stream_helper_kodic(text: &str) -> Vec<Token> {
+        let dictionary_config = DictionaryConfig {
+            kind: Some(DictionaryKind::KoDic),
+            path: None,
+        };
+        let dictionary = load_dictionary_from_config(dictionary_config).unwrap();
+        let tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
+
+        let mut analyzer = TextAnalyzer::from(tokenizer);
+        let mut token_stream = analyzer.token_stream(text);
+        let mut tokens: Vec<Token> = vec![];
+        let mut add_token = |token: &Token| {
+            tokens.push(token.clone());
+        };
+        token_stream.process(&mut add_token);
+
+        tokens
+    }
+
+    #[cfg(feature = "cc-cedict")]
+    fn token_stream_helper_cccedict(text: &str) -> Vec<Token> {
+        let dictionary_config = DictionaryConfig {
+            kind: Some(DictionaryKind::CcCedict),
+            path: None,
+        };
+        let dictionary = load_dictionary_from_config(dictionary_config).unwrap();
+        let tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
+
+        let mut analyzer = TextAnalyzer::from(tokenizer);
+        let mut token_stream = analyzer.token_stream(text);
+        let mut tokens: Vec<Token> = vec![];
+        let mut add_token = |token: &Token| {
+            tokens.push(token.clone());
+        };
+        token_stream.process(&mut add_token);
+
+        tokens
+    }
+
+    /// This is a function that can be used in tests and doc tests
+    /// to assert a token's correctness.
+    pub fn assert_token(token: &Token, position: usize, text: &str, from: usize, to: usize) {
+        assert_eq!(
+            token.position, position,
+            "expected position {position} but {token:?}"
+        );
+        assert_eq!(token.text, text, "expected text {text} but {token:?}");
+        assert_eq!(
+            token.offset_from, from,
+            "expected offset_from {from} but {token:?}"
+        );
+        assert_eq!(token.offset_to, to, "expected offset_to {to} but {token:?}");
     }
 
     #[test]
-    fn test_tokenizer_lindera() {
-        let dictionary_config = DictionaryConfig {
-            kind: Some(DictionaryKind::IPADIC),
-            path: None,
-        };
-        let dictionary = load_dictionary_from_config(dictionary_config).unwrap();
-        let tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
+    #[cfg(feature = "ipadic")]
+    fn test_tokenize_ipadic() {
+        let tokens = token_stream_helper_ipadic("羽田空港限定トートバッグ");
+        assert_eq!(tokens.len(), 3);
+        assert_token(&tokens[0], 0, "羽田空港", 0, 12);
+        assert_token(&tokens[1], 1, "限定", 12, 18);
+        assert_token(&tokens[2], 2, "トートバッグ", 18, 36);
+    }
 
-        let tokens = test_helper(tokenizer.token_stream("Linderaは形態素解析エンジンです。"));
-        assert_eq!(tokens.len(), 7);
-        {
-            let token = &tokens[0];
-            assert_eq!(token.text, "Lindera");
-            assert_eq!(token.offset_from, 0);
-            assert_eq!(token.offset_to, 7);
-            assert_eq!(token.position, 0);
-            assert_eq!(token.position_length, 1);
-        }
-        {
-            let token = &tokens[1];
-            assert_eq!(token.text, "は");
-            assert_eq!(token.offset_from, 7);
-            assert_eq!(token.offset_to, 10);
-            assert_eq!(token.position, 1);
-            assert_eq!(token.position_length, 1);
-        }
-        {
-            let token = &tokens[2];
-            assert_eq!(token.text, "形態素");
-            assert_eq!(token.offset_from, 10);
-            assert_eq!(token.offset_to, 19);
-            assert_eq!(token.position, 2);
-            assert_eq!(token.position_length, 1);
-        }
-        {
-            let token = &tokens[3];
-            assert_eq!(token.text, "解析");
-            assert_eq!(token.offset_from, 19);
-            assert_eq!(token.offset_to, 25);
-            assert_eq!(token.position, 3);
-            assert_eq!(token.position_length, 1);
-        }
-        {
-            let token = &tokens[4];
-            assert_eq!(token.text, "エンジン");
-            assert_eq!(token.offset_from, 25);
-            assert_eq!(token.offset_to, 37);
-            assert_eq!(token.position, 4);
-            assert_eq!(token.position_length, 1);
-        }
-        {
-            let token = &tokens[5];
-            assert_eq!(token.text, "です");
-            assert_eq!(token.offset_from, 37);
-            assert_eq!(token.offset_to, 43);
-            assert_eq!(token.position, 5);
-            assert_eq!(token.position_length, 1);
-        }
-        {
-            let token = &tokens[6];
-            assert_eq!(token.text, "。");
-            assert_eq!(token.offset_from, 43);
-            assert_eq!(token.offset_to, 46);
-            assert_eq!(token.position, 6);
-            assert_eq!(token.position_length, 1);
-        }
+    #[test]
+    #[cfg(feature = "unidic")]
+    fn test_tokenize_unidic() {
+        let tokens = token_stream_helper_unidic("羽田空港限定トートバッグ");
+        assert_eq!(tokens.len(), 5);
+        assert_token(&tokens[0], 0, "羽田", 0, 6);
+        assert_token(&tokens[1], 1, "空港", 6, 12);
+        assert_token(&tokens[2], 2, "限定", 12, 18);
+        assert_token(&tokens[3], 3, "トート", 18, 27);
+        assert_token(&tokens[4], 4, "バッグ", 27, 36);
+    }
+
+    #[test]
+    #[cfg(feature = "ko-dic")]
+    fn test_tokenize_kodic() {
+        let tokens = token_stream_helper_kodic("하네다공항한정토트백");
+        assert_eq!(tokens.len(), 4);
+        assert_token(&tokens[0], 0, "하네다", 0, 9);
+        assert_token(&tokens[1], 1, "공항", 9, 15);
+        assert_token(&tokens[2], 2, "한정", 15, 21);
+        assert_token(&tokens[3], 3, "토트백", 21, 30);
+    }
+
+    #[test]
+    #[cfg(feature = "cc-cedict")]
+    fn test_tokenize_cccedict() {
+        let tokens = token_stream_helper_cccedict("羽田机场限量版手提包");
+        assert_eq!(tokens.len(), 6);
+        assert_token(&tokens[0], 0, "羽田", 0, 6);
+        assert_token(&tokens[1], 1, "机场", 6, 12);
+        assert_token(&tokens[2], 2, "限", 12, 15);
+        assert_token(&tokens[3], 3, "量", 15, 18);
+        assert_token(&tokens[4], 4, "版", 18, 21);
+        assert_token(&tokens[5], 5, "手提包", 21, 30);
     }
 }

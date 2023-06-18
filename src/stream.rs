@@ -1,30 +1,25 @@
-use std::collections::VecDeque;
-
 use tantivy::tokenizer::{Token, TokenStream};
 
-pub struct LinderaTokenStream {
-    tokens: VecDeque<Token>,
-    token: Token,
+use lindera_tokenizer::token::Token as LToken;
+
+pub struct LinderaTokenStream<'a> {
+    pub tokens: Vec<LToken<'a>>,
+    pub token: &'a mut Token,
 }
 
-impl LinderaTokenStream {
-    pub fn new(tokens: VecDeque<Token>) -> Self {
-        Self {
-            tokens,
-            token: Default::default(),
-        }
-    }
-}
-
-impl TokenStream for LinderaTokenStream {
+impl<'a> TokenStream for LinderaTokenStream<'a> {
     fn advance(&mut self) -> bool {
-        match self.tokens.pop_front() {
-            Some(token) => {
-                self.token = token;
-                true
-            }
-            None => false,
+        if self.tokens.is_empty() {
+            return false;
         }
+        let token = self.tokens.remove(0);
+        self.token.text = token.text.to_string();
+        self.token.offset_from = token.byte_start;
+        self.token.offset_to = token.byte_end;
+        self.token.position = token.position;
+        self.token.position_length = token.position_length;
+
+        true
     }
 
     fn token(&self) -> &Token {
