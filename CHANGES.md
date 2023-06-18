@@ -2,6 +2,9 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.25.0 (2023-06-19)
+- Update dependencies #77 @mosuka
+
 ## 0.24.0 (2023-04-30)
 - Update Lindera #76 @mosuka
 
