@@ -23,7 +23,7 @@ ko-dic-compress = ["lindera-tokenizer/ko-dic-compress"]
 cc-cedict-compress = ["lindera-tokenizer/cc-cedict-compress"]
 
 [dependencies]
-tantivy = "0.20.2"
+tantivy-tokenizer-api = "0.1.1"
 
 lindera-core = "0.25.0"
 lindera-dictionary = "0.25.0"
@@ -31,6 +31,7 @@ lindera-tokenizer = "0.25.0"
 
 [dev-dependencies]
 criterion = { version = "0.5.1", features = ["html_reports"] }
+tantivy = "0.20.2"
 
 [[bench]]
 name = "bench"
