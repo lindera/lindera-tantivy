@@ -46,7 +46,7 @@ impl Tokenizer for LinderaTokenizer {
     feature = "cc-cedict"
 ))]
 mod tests {
-    use tantivy_tokenizer_api::{Token, Tokenizer, TokenStream};
+    use tantivy_tokenizer_api::{Token, TokenStream, Tokenizer};
 
     use lindera_core::mode::Mode;
     use lindera_dictionary::{load_dictionary_from_config, DictionaryConfig, DictionaryKind};
