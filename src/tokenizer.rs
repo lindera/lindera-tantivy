@@ -1,10 +1,9 @@
-use tantivy::tokenizer::{Token, Tokenizer};
-
 use lindera_core::{
     dictionary::{Dictionary, UserDictionary},
     mode::Mode,
 };
 use lindera_tokenizer::tokenizer::Tokenizer as LTokenizer;
+use tantivy_tokenizer_api::{Token, Tokenizer};
 
 use crate::stream::LinderaTokenStream;
 
@@ -47,7 +46,7 @@ impl Tokenizer for LinderaTokenizer {
     feature = "cc-cedict"
 ))]
 mod tests {
-    use tantivy::tokenizer::{TextAnalyzer, Token};
+    use tantivy_tokenizer_api::{Token, Tokenizer, TokenStream};
 
     use lindera_core::mode::Mode;
     use lindera_dictionary::{load_dictionary_from_config, DictionaryConfig, DictionaryKind};
@@ -61,10 +60,9 @@ mod tests {
             path: None,
         };
         let dictionary = load_dictionary_from_config(dictionary_config).unwrap();
-        let tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
+        let mut tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
 
-        let mut analyzer = TextAnalyzer::from(tokenizer);
-        let mut token_stream = analyzer.token_stream(text);
+        let mut token_stream = tokenizer.token_stream(text);
         let mut tokens: Vec<Token> = vec![];
         let mut add_token = |token: &Token| {
             tokens.push(token.clone());
@@ -81,10 +79,9 @@ mod tests {
             path: None,
         };
         let dictionary = load_dictionary_from_config(dictionary_config).unwrap();
-        let tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
+        let mut tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
 
-        let mut analyzer = TextAnalyzer::from(tokenizer);
-        let mut token_stream = analyzer.token_stream(text);
+        let mut token_stream = tokenizer.token_stream(text);
         let mut tokens: Vec<Token> = vec![];
         let mut add_token = |token: &Token| {
             tokens.push(token.clone());
@@ -101,10 +98,9 @@ mod tests {
             path: None,
         };
         let dictionary = load_dictionary_from_config(dictionary_config).unwrap();
-        let tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
+        let mut tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
 
-        let mut analyzer = TextAnalyzer::from(tokenizer);
-        let mut token_stream = analyzer.token_stream(text);
+        let mut token_stream = tokenizer.token_stream(text);
         let mut tokens: Vec<Token> = vec![];
         let mut add_token = |token: &Token| {
             tokens.push(token.clone());
@@ -121,10 +117,9 @@ mod tests {
             path: None,
         };
         let dictionary = load_dictionary_from_config(dictionary_config).unwrap();
-        let tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
+        let mut tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
 
-        let mut analyzer = TextAnalyzer::from(tokenizer);
-        let mut token_stream = analyzer.token_stream(text);
+        let mut token_stream = tokenizer.token_stream(text);
         let mut tokens: Vec<Token> = vec![];
         let mut add_token = |token: &Token| {
             tokens.push(token.clone());

@@ -1,4 +1,4 @@
-use tantivy::tokenizer::{Token, TokenStream};
+use tantivy_tokenizer_api::{Token, TokenStream};
 
 use lindera_tokenizer::token::Token as LToken;
 
