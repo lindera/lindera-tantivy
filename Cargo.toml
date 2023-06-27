@@ -1,6 +1,6 @@
 [package]
 name = "lindera-tantivy"
-version = "0.25.0"
+version = "0.25.1"
 edition = "2021"
 description = "Lindera Tokenizer for Tantivy."
 documentation = "https://docs.rs/lindera-tantivy"
@@ -12,7 +12,7 @@ categories = ["text-processing"]
 license = "MIT"
 
 [features]
-default = []  # Japanese dictionary
+default = []
 ipadic = ["lindera-tokenizer/ipadic"]  # Japanese dictionary
 unidic = ["lindera-tokenizer/unidic"]  # Japanese dictionary
 ko-dic = ["lindera-tokenizer/ko-dic"]  # Korean dictionary
