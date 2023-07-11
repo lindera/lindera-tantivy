@@ -2,8 +2,11 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.27.0 (2023-07-10)
+- Update Lindera to 0.27.0 #80 @mosuka
+
 ## 0.25.1 (2023-06-27)
-- Use tokenizer api crate. #78 @ massot
+- Use tokenizer api crate. #78 @massot
 
 ## 0.25.0 (2023-06-19)
 - Update dependencies #77 @mosuka
