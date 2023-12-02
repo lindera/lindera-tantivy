@@ -2,6 +2,10 @@
 All notable changes to this project will be documented in this file.
 This project adheres to [Semantic Versioning](http://semver.org/).
 
+## 0.27.1 (2023-12-02)
+- Bump up version to 0.27.1 #83 @mosuka
+- Update tantivy #82 @mosuka
+
 ## 0.27.0 (2023-07-10)
 - Update Lindera to 0.27.0 #80 @mosuka
 
