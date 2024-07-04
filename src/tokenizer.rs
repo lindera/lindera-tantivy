@@ -49,17 +49,16 @@ mod tests {
     use tantivy_tokenizer_api::{Token, TokenStream, Tokenizer};
 
     use lindera_core::mode::Mode;
-    use lindera_dictionary::{load_dictionary_from_config, DictionaryConfig, DictionaryKind};
+    use lindera_dictionary::{DictionaryLoader, DictionaryConfig, DictionaryKind};
 
     use super::LinderaTokenizer;
 
-    #[cfg(feature = "ipadic")]
-    fn token_stream_helper_ipadic(text: &str) -> Vec<Token> {
+    fn token_stream_helper(text: &str, dictionary_kind: DictionaryKind) -> Vec<Token> {
         let dictionary_config = DictionaryConfig {
-            kind: Some(DictionaryKind::IPADIC),
+            kind: Some(dictionary_kind),
             path: None,
         };
-        let dictionary = load_dictionary_from_config(dictionary_config).unwrap();
+        let dictionary = DictionaryLoader::load_dictionary_from_config(dictionary_config).unwrap();
         let mut tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
 
         let mut token_stream = tokenizer.token_stream(text);
@@ -70,63 +69,26 @@ mod tests {
         token_stream.process(&mut add_token);
 
         tokens
+    }
+
+    #[cfg(feature = "ipadic")]
+    fn token_stream_helper_ipadic(text: &str) -> Vec<Token> {
+        token_stream_helper(text, DictionaryKind::IPADIC)
     }
 
     #[cfg(feature = "unidic")]
     fn token_stream_helper_unidic(text: &str) -> Vec<Token> {
-        let dictionary_config = DictionaryConfig {
-            kind: Some(DictionaryKind::UniDic),
-            path: None,
-        };
-        let dictionary = load_dictionary_from_config(dictionary_config).unwrap();
-        let mut tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
-
-        let mut token_stream = tokenizer.token_stream(text);
-        let mut tokens: Vec<Token> = vec![];
-        let mut add_token = |token: &Token| {
-            tokens.push(token.clone());
-        };
-        token_stream.process(&mut add_token);
-
-        tokens
+        token_stream_helper(text, DictionaryKind::UniDic)
     }
 
     #[cfg(feature = "ko-dic")]
     fn token_stream_helper_kodic(text: &str) -> Vec<Token> {
-        let dictionary_config = DictionaryConfig {
-            kind: Some(DictionaryKind::KoDic),
-            path: None,
-        };
-        let dictionary = load_dictionary_from_config(dictionary_config).unwrap();
-        let mut tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
-
-        let mut token_stream = tokenizer.token_stream(text);
-        let mut tokens: Vec<Token> = vec![];
-        let mut add_token = |token: &Token| {
-            tokens.push(token.clone());
-        };
-        token_stream.process(&mut add_token);
-
-        tokens
+        token_stream_helper(text, DictionaryKind::KoDic)
     }
 
     #[cfg(feature = "cc-cedict")]
     fn token_stream_helper_cccedict(text: &str) -> Vec<Token> {
-        let dictionary_config = DictionaryConfig {
-            kind: Some(DictionaryKind::CcCedict),
-            path: None,
-        };
-        let dictionary = load_dictionary_from_config(dictionary_config).unwrap();
-        let mut tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
-
-        let mut token_stream = tokenizer.token_stream(text);
-        let mut tokens: Vec<Token> = vec![];
-        let mut add_token = |token: &Token| {
-            tokens.push(token.clone());
-        };
-        token_stream.process(&mut add_token);
-
-        tokens
+        token_stream_helper(text, DictionaryKind::CcCedict)
     }
 
     /// This is a function that can be used in tests and doc tests

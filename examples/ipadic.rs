@@ -1,15 +1,11 @@
 #[cfg(feature = "ipadic")]
 fn main() -> tantivy::Result<()> {
     use tantivy::{
-        collector::TopDocs,
-        doc,
-        query::QueryParser,
-        schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions},
-        Index,
+        collector::TopDocs, doc, query::QueryParser, schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions}, Document, Index, TantivyDocument
     };
 
     use lindera_core::mode::Mode;
-    use lindera_dictionary::{load_dictionary_from_config, DictionaryConfig, DictionaryKind};
+    use lindera_dictionary::{DictionaryLoader, DictionaryConfig, DictionaryKind};
     use lindera_tantivy::tokenizer::LinderaTokenizer;
 
     // create schema builder
@@ -62,7 +58,7 @@ fn main() -> tantivy::Result<()> {
         kind: Some(DictionaryKind::IPADIC),
         path: None,
     };
-    let dictionary = load_dictionary_from_config(dictionary_config).unwrap();
+    let dictionary = DictionaryLoader::load_dictionary_from_config(dictionary_config).unwrap();
     let tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
 
     // register Lindera tokenizer
@@ -113,8 +109,8 @@ fn main() -> tantivy::Result<()> {
     let top_docs = searcher.search(&query, &TopDocs::with_limit(10))?;
     println!("Search Result:");
     for (_, doc_address) in top_docs {
-        let retrieved_doc = searcher.doc(doc_address)?;
-        println!("{}", schema.to_json(&retrieved_doc));
+        let retrieved_doc: TantivyDocument = searcher.doc(doc_address)?;
+        println!("{}", retrieved_doc.to_json(&schema));
     }
 
     Ok(())
