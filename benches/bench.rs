@@ -8,7 +8,7 @@ fn bench_indexing(c: &mut Criterion) {
     use tantivy::Index;
 
     use lindera_core::mode::Mode;
-    use lindera_dictionary::{load_dictionary_from_config, DictionaryConfig, DictionaryKind};
+    use lindera_dictionary::{DictionaryLoader, DictionaryConfig, DictionaryKind};
     use lindera_tantivy::tokenizer::LinderaTokenizer;
 
     // create schema builder
@@ -58,7 +58,7 @@ fn bench_indexing(c: &mut Criterion) {
         kind: Some(DictionaryKind::IPADIC),
         path: None,
     };
-    let dictionary = load_dictionary_from_config(dictionary_config).unwrap();
+    let dictionary = DictionaryLoader::load_dictionary_from_config(dictionary_config).unwrap();
     let tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
 
     // register Lindera tokenizer
