@@ -1,6 +1,6 @@
 [package]
 name = "lindera-tantivy"
-version = "0.27.1"
+version = "0.32.2"
 edition = "2021"
 description = "Lindera Tokenizer for Tantivy."
 documentation = "https://docs.rs/lindera-tantivy"
@@ -17,21 +17,17 @@ ipadic = ["lindera-tokenizer/ipadic"]  # Japanese dictionary
 unidic = ["lindera-tokenizer/unidic"]  # Japanese dictionary
 ko-dic = ["lindera-tokenizer/ko-dic"]  # Korean dictionary
 cc-cedict = ["lindera-tokenizer/cc-cedict"]  # Chinese dictionary
-ipadic-compress = ["lindera-tokenizer/ipadic-compress"]
-unidic-compress = ["lindera-tokenizer/unidic-compress"]
-ko-dic-compress = ["lindera-tokenizer/ko-dic-compress"]
-cc-cedict-compress = ["lindera-tokenizer/cc-cedict-compress"]
 
 [dependencies]
-tantivy-tokenizer-api = "0.2.0"
+tantivy-tokenizer-api = "0.3.0"
 
-lindera-core = "0.27.0"
-lindera-dictionary = "0.27.0"
-lindera-tokenizer = "0.27.0"
+lindera-core = "0.32.2"
+lindera-dictionary = "0.32.2"
+lindera-tokenizer = "0.32.2"
 
 [dev-dependencies]
 criterion = { version = "0.5.1", features = ["html_reports"] }
-tantivy = "0.21.1"
+tantivy = "0.22.0"
 
 [[bench]]
 name = "bench"
