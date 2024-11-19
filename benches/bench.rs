@@ -3,12 +3,14 @@ use criterion::{criterion_group, criterion_main};
 
 #[cfg(feature = "ipadic")]
 fn bench_indexing(c: &mut Criterion) {
+    use lindera::dictionary::load_dictionary_from_kind;
+    use lindera::segmenter::Segmenter;
     use tantivy::doc;
     use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
     use tantivy::Index;
 
-    use lindera_core::mode::Mode;
-    use lindera_dictionary::{DictionaryLoader, DictionaryConfig, DictionaryKind};
+    use lindera::dictionary::DictionaryKind;
+    use lindera::mode::Mode;
     use lindera_tantivy::tokenizer::LinderaTokenizer;
 
     // create schema builder
@@ -54,12 +56,11 @@ fn bench_indexing(c: &mut Criterion) {
         docs.push(doc);
     }
 
-    let dictionary_config = DictionaryConfig {
-        kind: Some(DictionaryKind::IPADIC),
-        path: None,
-    };
-    let dictionary = DictionaryLoader::load_dictionary_from_config(dictionary_config).unwrap();
-    let tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
+    let mode = Mode::Normal;
+    let dictionary = load_dictionary_from_kind(DictionaryKind::IPADIC).unwrap();
+    let user_dictionary = None;
+    let segmenter = Segmenter::new(mode, dictionary, user_dictionary);
+    let tokenizer = LinderaTokenizer::from_segmenter(segmenter);
 
     // register Lindera tokenizer
     index.tokenizers().register("lang_ja", tokenizer);

@@ -1,8 +1,10 @@
-use lindera_core::{
-    dictionary::{Dictionary, UserDictionary},
-    mode::Mode,
-};
-use lindera_tokenizer::tokenizer::Tokenizer as LTokenizer;
+use std::path::Path;
+
+use lindera::character_filter::BoxCharacterFilter;
+use lindera::token_filter::BoxTokenFilter;
+use lindera::tokenizer::{Tokenizer as LTokenizer, TokenizerBuilder};
+use tantivy::Result;
+use tantivy::TantivyError;
 use tantivy_tokenizer_api::{Token, Tokenizer};
 
 use crate::stream::LinderaTokenStream;
@@ -14,15 +16,55 @@ pub struct LinderaTokenizer {
 }
 
 impl LinderaTokenizer {
-    pub fn new(
-        dictionary: Dictionary,
-        user_dictionary: Option<UserDictionary>,
-        mode: Mode,
-    ) -> LinderaTokenizer {
+    /// Create a new `LinderaTokenizer`.
+    /// This function will create a new `LinderaTokenizer` with settings from the YAML file specified in the `LINDERA_CONFIG_PATH` environment variable.
+    pub fn new() -> Result<LinderaTokenizer> {
+        let builder = TokenizerBuilder::new()
+            .map_err(|e| TantivyError::InvalidArgument(format!("{:?}", e)))?;
+        let tokenizer = builder
+            .build()
+            .map_err(|e| TantivyError::InvalidArgument(format!("{:?}", e)))?;
+        Ok(LinderaTokenizer {
+            tokenizer,
+            token: Default::default(),
+        })
+    }
+
+    /// Create a new `LinderaTokenizer`.
+    /// This function will create a new `LinderaTokenizer` with settings from the YAML file.
+    pub fn from_file(file_path: &Path) -> Result<LinderaTokenizer> {
+        let builder = TokenizerBuilder::from_file(file_path)
+            .map_err(|e| TantivyError::InvalidArgument(format!("{:?}", e)))?;
+        let tokenizer = builder
+            .build()
+            .map_err(|e| TantivyError::InvalidArgument(format!("{:?}", e)))?;
+        Ok(LinderaTokenizer {
+            tokenizer,
+            token: Default::default(),
+        })
+    }
+
+    /// Create a new `LinderaTokenizer`.
+    /// This function will create a new `LinderaTokenizer` with the specified `lindera::segmenter::Segmenter`.
+    pub fn from_segmenter(segmenter: lindera::segmenter::Segmenter) -> LinderaTokenizer {
         LinderaTokenizer {
-            tokenizer: LTokenizer::new(dictionary, user_dictionary, mode),
+            tokenizer: LTokenizer::new(segmenter),
             token: Default::default(),
         }
+    }
+
+    /// Append a character filter to the tokenizer.
+    pub fn append_character_filter(&mut self, character_filter: BoxCharacterFilter) -> &mut Self {
+        self.tokenizer.append_character_filter(character_filter);
+
+        self
+    }
+
+    /// Append a token filter to the tokenizer.
+    pub fn append_token_filter(&mut self, token_filter: BoxTokenFilter) -> &mut Self {
+        self.tokenizer.token_filters.push(token_filter);
+
+        self
     }
 }
 
@@ -46,20 +88,20 @@ impl Tokenizer for LinderaTokenizer {
     feature = "cc-cedict"
 ))]
 mod tests {
+    use lindera::segmenter::Segmenter;
     use tantivy_tokenizer_api::{Token, TokenStream, Tokenizer};
 
-    use lindera_core::mode::Mode;
-    use lindera_dictionary::{DictionaryLoader, DictionaryConfig, DictionaryKind};
+    use lindera::dictionary::{load_dictionary_from_kind, DictionaryKind};
+    use lindera::mode::Mode;
 
     use super::LinderaTokenizer;
 
     fn token_stream_helper(text: &str, dictionary_kind: DictionaryKind) -> Vec<Token> {
-        let dictionary_config = DictionaryConfig {
-            kind: Some(dictionary_kind),
-            path: None,
-        };
-        let dictionary = DictionaryLoader::load_dictionary_from_config(dictionary_config).unwrap();
-        let mut tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
+        let mode = Mode::Normal;
+        let dictionary = load_dictionary_from_kind(dictionary_kind).unwrap();
+        let user_dictionary = None;
+        let segmenter = Segmenter::new(mode, dictionary, user_dictionary);
+        let mut tokenizer = LinderaTokenizer::from_segmenter(segmenter);
 
         let mut token_stream = tokenizer.token_stream(text);
         let mut tokens: Vec<Token> = vec![];

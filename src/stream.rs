@@ -1,6 +1,6 @@
 use tantivy_tokenizer_api::{Token, TokenStream};
 
-use lindera_tokenizer::token::Token as LToken;
+use lindera::token::Token as LToken;
 
 pub struct LinderaTokenStream<'a> {
     pub tokens: Vec<LToken<'a>>,
@@ -23,10 +23,10 @@ impl<'a> TokenStream for LinderaTokenStream<'a> {
     }
 
     fn token(&self) -> &Token {
-        &self.token
+        self.token
     }
 
     fn token_mut(&mut self) -> &mut Token {
-        &mut self.token
+        self.token
     }
 }
