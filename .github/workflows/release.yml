@@ -8,18 +8,19 @@ on:
 
 jobs:
   create-release:
-    name: Create Release
+    name: Upload artifact
     runs-on: ubuntu-latest
     steps:
       - id: create-release
-        uses: actions/create-release@v1.0.0
+        uses: softprops/action-gh-release@v2
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
+          name: Release ${{ github.ref_name }}
           tag_name: ${{ github.ref }}
-          release_name: Release ${{ github.ref }}
           draft: false
           prerelease: false
+          generate_release_notes: true
 
   publish-crates:
     name: Publish crate

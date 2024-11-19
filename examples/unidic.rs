@@ -1,11 +1,15 @@
 #[cfg(feature = "unidic")]
 fn main() -> tantivy::Result<()> {
     use tantivy::{
-        collector::TopDocs, doc, query::QueryParser, schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions}, Document, Index, TantivyDocument
+        collector::TopDocs,
+        doc,
+        query::QueryParser,
+        schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions},
+        Document, Index, TantivyDocument,
     };
 
-    use lindera_core::mode::Mode;
-    use lindera_dictionary::{DictionaryLoader, DictionaryConfig, DictionaryKind};
+    use lindera::dictionary::DictionaryKind;
+    use lindera::{dictionary::load_dictionary_from_kind, mode::Mode, segmenter::Segmenter};
     use lindera_tantivy::tokenizer::LinderaTokenizer;
 
     // create schema builder
@@ -54,12 +58,11 @@ fn main() -> tantivy::Result<()> {
     let index = Index::create_in_ram(schema.clone());
 
     // Tokenizer with UniDic
-    let dictionary_config = DictionaryConfig {
-        kind: Some(DictionaryKind::UniDic),
-        path: None,
-    };
-    let dictionary = DictionaryLoader::load_dictionary_from_config(dictionary_config).unwrap();
-    let tokenizer = LinderaTokenizer::new(dictionary, None, Mode::Normal);
+    let mode = Mode::Normal;
+    let dictionary = load_dictionary_from_kind(DictionaryKind::UniDic).unwrap();
+    let user_dictionary = None;
+    let segmenter = Segmenter::new(mode, dictionary, user_dictionary);
+    let tokenizer = LinderaTokenizer::from_segmenter(segmenter);
 
     // register Lindera tokenizer
     index.tokenizers().register("lang_ja", tokenizer);
