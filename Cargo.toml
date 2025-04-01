@@ -1,6 +1,6 @@
 [package]
 name = "lindera-tantivy"
-version = "0.40.1"
+version = "0.40.2"
 edition = "2021"
 description = "Lindera Tokenizer for Tantivy."
 documentation = "https://docs.rs/lindera-tantivy"
@@ -24,7 +24,7 @@ compress = ["lindera/compress"]  # Compress dictionaries
 tantivy-tokenizer-api = "0.3.0"
 tantivy = "0.22.0"
 
-lindera = "0.40.1"
+lindera = "0.40.2"
 
 [dev-dependencies]
 criterion = { version = "0.5.1", features = ["html_reports"] }
