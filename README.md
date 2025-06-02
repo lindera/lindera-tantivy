@@ -1,16 +1,15 @@
 # Lindera tokenizer for Tantivy
 
-[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT) [![Join the chat at https://gitter.im/lindera-morphology/lindera](https://badges.gitter.im/lindera-morphology/lindera.svg)](https://gitter.im/lindera-morphology/lindera?utm_source=badge&utm_medium=badge&utm_campaign=pr-badge&utm_content=badge)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](https://opensource.org/licenses/MIT)
 
-[Lindera](https://github.com/lindera-morphology/lindera) Tokenizer for [Tantivy](https://github.com/tantivy-search/tantivy).
-
+[Lindera](https://github.com/lindera/lindera) Tokenizer for [Tantivy](https://github.com/tantivy-search/tantivy).
 
 ## Usage
 
 Make sure you have activated the required dictionaries for the 　Lindera in Cargo.toml.
 The following example enables IPADIC.
 
-```
+```toml
 [dependencies]
 lindera = "0.38"
 lindera-tantivy = { version = "0.38.0", features = ["ipadic"] }
@@ -267,4 +266,5 @@ fn main() -> tantivy::Result<()> {
 ## API reference
 
 The API reference is available. Please see following URL:
+
 - <a href="https://docs.rs/lindera-tantivy" target="_blank">lindera-tantivy</a>

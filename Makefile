@@ -2,9 +2,6 @@ LINDERA_TANTIVY_VERSION ?= $(shell cargo metadata --no-deps --format-version=1 |
 
 .DEFAULT_GOAL := help
 
-default: ## Show Makefile list
-	@echo $(MAKEFILE_LIST)
-
 clean: ## Clean the project
 	cargo clean
 
