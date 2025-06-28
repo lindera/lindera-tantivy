@@ -7,65 +7,54 @@ on:
       - "v*.*.*"
 
 jobs:
-  check:
-    name: Check
-    strategy:
-      matrix:
-        os: [ubuntu-latest]
-        toolchain: [stable]
-    runs-on: ${{ matrix.os }}
-    steps:
-      - uses: actions/checkout@v1
-      - uses: actions-rs/toolchain@v1
-        with:
-          profile: minimal
-          toolchain: ${{ matrix.toolchain }}
-          override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          command: check
-
   format:
     name: Format
-    needs: [check]
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        platform:
+          - runner: ubuntu-latest
         toolchain: [stable]
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.platform.runner }}
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions-rs/toolchain@v1
+      - name: Run checkout
+        uses: actions/checkout@v4
+
+      - name: Install toolchain
+        uses: dtolnay/rust-toolchain@v1
         with:
-          profile: minimal
           toolchain: ${{ matrix.toolchain }}
-          override: true
-      - run: rustup component add rustfmt
-      - uses: actions-rs/cargo@v1
-        with:
-          command: fmt
-          args: --all -- --check
+          components: rustfmt, clippy
+
+      - name: Run format
+        run: cargo fmt --all -- --check
 
   test:
     name: Test
     needs: [format]
     strategy:
       matrix:
-        os: [ubuntu-latest, macOS-latest, windows-latest]
+        platform:
+          - runner: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
+          - runner: macOS-latest
+            target: aarch64-apple-darwin
+          - runner: windows-latest
+            target: x86_64-pc-windows-msvc
         toolchain: [stable]
-        features: ["ipadic", "ko-dic", "cc-cedict", "unidic", "ipadic-neologd"]
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.platform.runner }}
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions-rs/toolchain@v1
+      - name: Run checkout
+        uses: actions/checkout@v4
+
+      - name: Install toolchain
+        uses: dtolnay/rust-toolchain@v1
         with:
-          profile: minimal
           toolchain: ${{ matrix.toolchain }}
-          override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          command: test
-          args: --features "${{ matrix.features }}"
+          target: ${{ matrix.platform.target }}
+          components: rustfmt, clippy
+
+      - name: Run test
+        run: cargo test --target "${{ matrix.platform.target }}" --all-features
 
   create-release:
     name: Upload artifact
@@ -88,17 +77,32 @@ jobs:
     needs: [create-release]
     strategy:
       matrix:
-        os: [ubuntu-latest]
+        platform:
+          - runner: ubuntu-latest
+            target: x86_64-unknown-linux-gnu
         toolchain: [stable]
-    runs-on: ${{ matrix.os }}
+    runs-on: ${{ matrix.platform.runner }}
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions-rs/toolchain@v1
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install toolchain
+        uses: dtolnay/rust-toolchain@v1
         with:
-          profile: minimal
           toolchain: ${{ matrix.toolchain }}
-          override: true
-      - uses: actions-rs/cargo@v1
-        with:
-          command: publish
-          args: --token ${{ secrets.CRATES_TOKEN }}
+          components: rustfmt, clippy
+
+      - name: Publish lindera-tantivy
+        run: |
+          LINDERA_TANTIVY_VERSION=$(cargo metadata --no-deps --format-version=1 | jq -r '.packages[] | select(.name=="lindera-tantivy") | .version')
+          LINDERA_TANTIVY_VERSIONS=$(curl -s -XGET https://crates.io/api/v1/crates/lindera-tantivy | jq -r 'select(.versions != null) | .versions[].num')
+          if echo ${LINDERA_TANTIVY_VERSIONS} | grep ${LINDERA_TANTIVY_VERSION} >/dev/null; then
+            echo "lindera-tantivy ${LINDERA_TANTIVY_VERSION} has already published"
+          else
+            pushd lindera-tantivy
+            cargo publish
+            popd
+          fi
+          sleep 20
+        env:
+          CARGO_REGISTRY_TOKEN: ${{ secrets.CRATES_TOKEN }}
