@@ -7,8 +7,69 @@ on:
       - "v*.*.*"
 
 jobs:
+  check:
+    name: Check
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        toolchain: [stable]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.toolchain }}
+          override: true
+      - uses: actions-rs/cargo@v1
+        with:
+          command: check
+
+  format:
+    name: Format
+    needs: [check]
+    strategy:
+      matrix:
+        os: [ubuntu-latest]
+        toolchain: [stable]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.toolchain }}
+          override: true
+      - run: rustup component add rustfmt
+      - uses: actions-rs/cargo@v1
+        with:
+          command: fmt
+          args: --all -- --check
+
+  test:
+    name: Test
+    needs: [format]
+    strategy:
+      matrix:
+        os: [ubuntu-latest, macOS-latest, windows-latest]
+        toolchain: [stable]
+        features: ["ipadic", "ko-dic", "cc-cedict", "unidic", "ipadic-neologd"]
+    runs-on: ${{ matrix.os }}
+    steps:
+      - uses: actions/checkout@v1
+      - uses: actions-rs/toolchain@v1
+        with:
+          profile: minimal
+          toolchain: ${{ matrix.toolchain }}
+          override: true
+      - uses: actions-rs/cargo@v1
+        with:
+          command: test
+          args: --features "${{ matrix.features }}"
+
   create-release:
     name: Upload artifact
+    needs: [test]
     runs-on: ubuntu-latest
     steps:
       - id: create-release
@@ -24,11 +85,11 @@ jobs:
 
   publish-crates:
     name: Publish crate
+    needs: [create-release]
     strategy:
       matrix:
         os: [ubuntu-latest]
         toolchain: [stable]
-    needs: [create-release]
     runs-on: ${{ matrix.os }}
     steps:
       - uses: actions/checkout@v1
