@@ -11,6 +11,9 @@ clean: ## Clean the project
 format: ## Format the code
 	cargo fmt
 
+lint: ## Lint the project
+	cargo clippy --all-targets --all-features -- -D warnings
+
 test: ## Run tests
 	cargo test --all-features --all-targets
 
