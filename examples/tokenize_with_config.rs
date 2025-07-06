@@ -1,8 +1,10 @@
 use std::path::PathBuf;
 
 fn main() -> tantivy::Result<()> {
+    use tantivy::collector::TopDocs;
+    use tantivy::query::QueryParser;
     use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
-    use tantivy::{Document, Index, TantivyDocument, collector::TopDocs, doc, query::QueryParser};
+    use tantivy::{Document, Index, TantivyDocument, doc};
 
     use lindera_tantivy::tokenizer::LinderaTokenizer;
 

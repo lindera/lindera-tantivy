@@ -1,7 +1,9 @@
 #[cfg(feature = "cc-cedict")]
 fn main() -> tantivy::Result<()> {
+    use tantivy::collector::TopDocs;
+    use tantivy::query::QueryParser;
     use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
-    use tantivy::{Document, Index, TantivyDocument, collector::TopDocs, doc, query::QueryParser};
+    use tantivy::{Document, Index, TantivyDocument, doc};
 
     use lindera::dictionary::DictionaryKind;
     use lindera::{dictionary::load_dictionary_from_kind, mode::Mode, segmenter::Segmenter};
