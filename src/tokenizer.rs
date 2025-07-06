@@ -1,11 +1,12 @@
 use std::path::Path;
 
-use lindera::character_filter::BoxCharacterFilter;
-use lindera::token_filter::BoxTokenFilter;
-use lindera::tokenizer::{Tokenizer as LTokenizer, TokenizerBuilder};
 use tantivy::Result;
 use tantivy::TantivyError;
 use tantivy_tokenizer_api::{Token, Tokenizer};
+
+use lindera::character_filter::BoxCharacterFilter;
+use lindera::token_filter::BoxTokenFilter;
+use lindera::tokenizer::{Tokenizer as LTokenizer, TokenizerBuilder};
 
 use crate::stream::LinderaTokenStream;
 
@@ -19,11 +20,11 @@ impl LinderaTokenizer {
     /// Create a new `LinderaTokenizer`.
     /// This function will create a new `LinderaTokenizer` with settings from the YAML file specified in the `LINDERA_CONFIG_PATH` environment variable.
     pub fn new() -> Result<LinderaTokenizer> {
-        let builder = TokenizerBuilder::new()
-            .map_err(|e| TantivyError::InvalidArgument(format!("{:?}", e)))?;
+        let builder =
+            TokenizerBuilder::new().map_err(|e| TantivyError::InvalidArgument(format!("{e:?}")))?;
         let tokenizer = builder
             .build()
-            .map_err(|e| TantivyError::InvalidArgument(format!("{:?}", e)))?;
+            .map_err(|e| TantivyError::InvalidArgument(format!("{e:?}")))?;
         Ok(LinderaTokenizer {
             tokenizer,
             token: Default::default(),
@@ -34,10 +35,10 @@ impl LinderaTokenizer {
     /// This function will create a new `LinderaTokenizer` with settings from the YAML file.
     pub fn from_file(file_path: &Path) -> Result<LinderaTokenizer> {
         let builder = TokenizerBuilder::from_file(file_path)
-            .map_err(|e| TantivyError::InvalidArgument(format!("{:?}", e)))?;
+            .map_err(|e| TantivyError::InvalidArgument(format!("{e:?}")))?;
         let tokenizer = builder
             .build()
-            .map_err(|e| TantivyError::InvalidArgument(format!("{:?}", e)))?;
+            .map_err(|e| TantivyError::InvalidArgument(format!("{e:?}")))?;
         Ok(LinderaTokenizer {
             tokenizer,
             token: Default::default(),
@@ -91,7 +92,7 @@ mod tests {
     use lindera::segmenter::Segmenter;
     use tantivy_tokenizer_api::{Token, TokenStream, Tokenizer};
 
-    use lindera::dictionary::{load_dictionary_from_kind, DictionaryKind};
+    use lindera::dictionary::{DictionaryKind, load_dictionary_from_kind};
     use lindera::mode::Mode;
 
     use super::LinderaTokenizer;

@@ -1,13 +1,10 @@
 use std::path::PathBuf;
 
 fn main() -> tantivy::Result<()> {
-    use tantivy::{
-        collector::TopDocs,
-        doc,
-        query::QueryParser,
-        schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions},
-        Document, Index, TantivyDocument,
-    };
+    use tantivy::collector::TopDocs;
+    use tantivy::query::QueryParser;
+    use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
+    use tantivy::{Document, Index, TantivyDocument, doc};
 
     use lindera_tantivy::tokenizer::LinderaTokenizer;
 
@@ -104,10 +101,10 @@ fn main() -> tantivy::Result<()> {
     // parse query
     let query_str = "ＴＯＫＹＯ";
     let query = query_parser.parse_query(query_str)?;
-    println!("Query String: {}", query_str);
+    println!("Query String: {query_str}");
 
     // search
-    println!("Parsed Query: {:?}", query);
+    println!("Parsed Query: {query:?}");
     let top_docs = searcher.search(&query, &TopDocs::with_limit(10))?;
     println!("Search Result:");
     for (_, doc_address) in top_docs {
