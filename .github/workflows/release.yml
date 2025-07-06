@@ -99,7 +99,6 @@ jobs:
           if echo ${LINDERA_TANTIVY_VERSIONS} | grep ${LINDERA_TANTIVY_VERSION} >/dev/null; then
             echo "lindera-tantivy ${LINDERA_TANTIVY_VERSION} has already published"
           else
-            pushd lindera-tantivy
             cargo publish
             popd
           fi
