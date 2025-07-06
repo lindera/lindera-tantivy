@@ -100,7 +100,6 @@ jobs:
             echo "lindera-tantivy ${LINDERA_TANTIVY_VERSION} has already published"
           else
             cargo publish
-            popd
           fi
           sleep 20
         env:
