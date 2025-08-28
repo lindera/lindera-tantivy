@@ -72,11 +72,13 @@ impl LinderaTokenizer {
 impl Tokenizer for LinderaTokenizer {
     type TokenStream<'a> = LinderaTokenStream<'a>;
 
+    #[inline]
     fn token_stream<'a>(&'a mut self, text: &'a str) -> LinderaTokenStream<'a> {
         self.token.reset();
         LinderaTokenStream {
             tokens: self.tokenizer.tokenize(text).unwrap(),
             token: &mut self.token,
+            current_index: 0,
         }
     }
 }
