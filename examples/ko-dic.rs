@@ -1,12 +1,13 @@
-#[cfg(feature = "ko-dic")]
+#[cfg(feature = "embedded-ko-dic")]
 fn main() -> tantivy::Result<()> {
     use tantivy::collector::TopDocs;
     use tantivy::query::QueryParser;
     use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
     use tantivy::{Document, Index, TantivyDocument, doc};
 
-    use lindera::dictionary::DictionaryKind;
-    use lindera::{dictionary::load_dictionary_from_kind, mode::Mode, segmenter::Segmenter};
+    use lindera::dictionary::load_dictionary;
+    use lindera::mode::Mode;
+    use lindera::segmenter::Segmenter;
     use lindera_tantivy::tokenizer::LinderaTokenizer;
 
     // create schema builder
@@ -56,7 +57,7 @@ fn main() -> tantivy::Result<()> {
 
     // Tokenizer with ko-dic
     let mode = Mode::Normal;
-    let dictionary = load_dictionary_from_kind(DictionaryKind::KoDic).unwrap();
+    let dictionary = load_dictionary("embedded://ko-dic").unwrap();
     let user_dictionary = None;
     let segmenter = Segmenter::new(mode, dictionary, user_dictionary);
     let tokenizer = LinderaTokenizer::from_segmenter(segmenter);
@@ -116,7 +117,7 @@ fn main() -> tantivy::Result<()> {
     Ok(())
 }
 
-#[cfg(not(feature = "ko-dic"))]
+#[cfg(not(feature = "embedded-ko-dic"))]
 fn main() -> tantivy::Result<()> {
     Ok(())
 }

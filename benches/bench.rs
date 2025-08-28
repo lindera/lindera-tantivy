@@ -1,13 +1,12 @@
 use criterion::Criterion;
 use criterion::{criterion_group, criterion_main};
 
-#[cfg(feature = "ipadic")]
+#[cfg(feature = "embedded-ipadic")]
 fn bench_indexing(c: &mut Criterion) {
     use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
     use tantivy::{Index, doc};
 
-    use lindera::dictionary::DictionaryKind;
-    use lindera::dictionary::load_dictionary_from_kind;
+    use lindera::dictionary::load_dictionary;
     use lindera::mode::Mode;
     use lindera::segmenter::Segmenter;
     use lindera_tantivy::tokenizer::LinderaTokenizer;
@@ -56,7 +55,7 @@ fn bench_indexing(c: &mut Criterion) {
     }
 
     let mode = Mode::Normal;
-    let dictionary = load_dictionary_from_kind(DictionaryKind::IPADIC).unwrap();
+    let dictionary = load_dictionary("embedded://ipadic").unwrap();
     let user_dictionary = None;
     let segmenter = Segmenter::new(mode, dictionary, user_dictionary);
     let tokenizer = LinderaTokenizer::from_segmenter(segmenter);
@@ -83,7 +82,7 @@ fn bench_indexing(c: &mut Criterion) {
     group.finish();
 }
 
-#[cfg(not(feature = "ipadic"))]
+#[cfg(not(feature = "embedded-ipadic"))]
 fn bench_indexing(_c: &mut Criterion) {}
 
 criterion_group!(benches, bench_indexing,);
