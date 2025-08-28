@@ -13,14 +13,14 @@ impl<'a> TokenStream for LinderaTokenStream<'a> {
         if self.current_index >= self.tokens.len() {
             return false;
         }
-        
+
         let token = &self.tokens[self.current_index];
         self.token.text = token.text.to_string();
         self.token.offset_from = token.byte_start;
         self.token.offset_to = token.byte_end;
         self.token.position = token.position;
         self.token.position_length = token.position_length;
-        
+
         self.current_index += 1;
         true
     }
