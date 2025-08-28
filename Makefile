@@ -17,6 +17,9 @@ lint: ## Lint the project
 test: ## Run tests
 	cargo test --all-features --all-targets
 
+bench: ## Run benchmarks
+	cargo bench --features=embedded-ipadic
+
 tag: ## Make a new tag for the current version
 	git tag v$(LINDERA_TANTIVY_VERSION)
 	git push origin v$(LINDERA_TANTIVY_VERSION)

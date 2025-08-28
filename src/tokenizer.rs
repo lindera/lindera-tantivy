@@ -72,34 +72,36 @@ impl LinderaTokenizer {
 impl Tokenizer for LinderaTokenizer {
     type TokenStream<'a> = LinderaTokenStream<'a>;
 
+    #[inline]
     fn token_stream<'a>(&'a mut self, text: &'a str) -> LinderaTokenStream<'a> {
         self.token.reset();
         LinderaTokenStream {
             tokens: self.tokenizer.tokenize(text).unwrap(),
             token: &mut self.token,
+            current_index: 0,
         }
     }
 }
 
 #[cfg(test)]
 #[cfg(any(
-    feature = "ipadic",
-    feature = "unidic",
-    feature = "ko-dic",
-    feature = "cc-cedict"
+    feature = "embedded-ipadic",
+    feature = "embedded-unidic",
+    feature = "embedded-ko-dic",
+    feature = "embedded-cc-cedict"
 ))]
 mod tests {
     use lindera::segmenter::Segmenter;
     use tantivy_tokenizer_api::{Token, TokenStream, Tokenizer};
 
-    use lindera::dictionary::{DictionaryKind, load_dictionary_from_kind};
+    use lindera::dictionary::load_dictionary;
     use lindera::mode::Mode;
 
     use super::LinderaTokenizer;
 
-    fn token_stream_helper(text: &str, dictionary_kind: DictionaryKind) -> Vec<Token> {
+    fn token_stream_helper(text: &str, dictionary_uri: &str) -> Vec<Token> {
         let mode = Mode::Normal;
-        let dictionary = load_dictionary_from_kind(dictionary_kind).unwrap();
+        let dictionary = load_dictionary(dictionary_uri).unwrap();
         let user_dictionary = None;
         let segmenter = Segmenter::new(mode, dictionary, user_dictionary);
         let mut tokenizer = LinderaTokenizer::from_segmenter(segmenter);
@@ -114,24 +116,24 @@ mod tests {
         tokens
     }
 
-    #[cfg(feature = "ipadic")]
+    #[cfg(feature = "embedded-ipadic")]
     fn token_stream_helper_ipadic(text: &str) -> Vec<Token> {
-        token_stream_helper(text, DictionaryKind::IPADIC)
+        token_stream_helper(text, "embedded://ipadic")
     }
 
-    #[cfg(feature = "unidic")]
+    #[cfg(feature = "embedded-unidic")]
     fn token_stream_helper_unidic(text: &str) -> Vec<Token> {
-        token_stream_helper(text, DictionaryKind::UniDic)
+        token_stream_helper(text, "embedded://unidic")
     }
 
-    #[cfg(feature = "ko-dic")]
+    #[cfg(feature = "embedded-ko-dic")]
     fn token_stream_helper_kodic(text: &str) -> Vec<Token> {
-        token_stream_helper(text, DictionaryKind::KoDic)
+        token_stream_helper(text, "embedded://ko-dic")
     }
 
-    #[cfg(feature = "cc-cedict")]
+    #[cfg(feature = "embedded-cc-cedict")]
     fn token_stream_helper_cccedict(text: &str) -> Vec<Token> {
-        token_stream_helper(text, DictionaryKind::CcCedict)
+        token_stream_helper(text, "embedded://cc-cedict")
     }
 
     /// This is a function that can be used in tests and doc tests
@@ -150,7 +152,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "ipadic")]
+    #[cfg(feature = "embedded-ipadic")]
     fn test_tokenize_ipadic() {
         let tokens = token_stream_helper_ipadic("羽田空港限定トートバッグ");
         assert_eq!(tokens.len(), 3);
@@ -160,7 +162,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "unidic")]
+    #[cfg(feature = "embedded-unidic")]
     fn test_tokenize_unidic() {
         let tokens = token_stream_helper_unidic("羽田空港限定トートバッグ");
         assert_eq!(tokens.len(), 5);
@@ -172,7 +174,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "ko-dic")]
+    #[cfg(feature = "embedded-ko-dic")]
     fn test_tokenize_kodic() {
         let tokens = token_stream_helper_kodic("하네다공항한정토트백");
         assert_eq!(tokens.len(), 4);
@@ -183,7 +185,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "cc-cedict")]
+    #[cfg(feature = "embedded-cc-cedict")]
     fn test_tokenize_cccedict() {
         let tokens = token_stream_helper_cccedict("羽田机场限量版手提包");
         assert_eq!(tokens.len(), 6);

@@ -1,7 +1,6 @@
 segmenter:
   mode: "normal"
-  dictionary:
-    kind: "ipadic"
+  dictionary: "embedded://ipadic"
   # user_dictionary:
   #   path: "./resources/ipadic_simple.csv"
   #   kind: "ipadic"
@@ -16,8 +15,8 @@ character_filters:
       normalize_kana: true
   - kind: mapping
     args:
-       mapping:
-         リンデラ: Lindera
+      mapping:
+        リンデラ: Lindera
 
 token_filters:
   - kind: "japanese_compound_word"
