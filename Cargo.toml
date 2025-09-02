@@ -1,6 +1,6 @@
 [package]
 name = "lindera-tantivy"
-version = "1.0.0"
+version = "1.0.1"
 edition = "2024"
 description = "Lindera Tokenizer for Tantivy."
 documentation = "https://docs.rs/lindera-tantivy"
@@ -34,7 +34,7 @@ tantivy-tokenizer-api = "0.6.0"
 tantivy = "0.25.0"
 
 
-lindera = "1.1.0"
+lindera = "1.1.1"
 
 [dev-dependencies]
 criterion = { version = "0.7.0", features = ["html_reports"] }
