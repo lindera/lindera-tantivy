@@ -15,7 +15,7 @@ impl<'a> TokenStream for LinderaTokenStream<'a> {
         }
 
         let token = &self.tokens[self.current_index];
-        self.token.text = token.text.to_string();
+        self.token.text = token.surface.to_string();
         self.token.offset_from = token.byte_start;
         self.token.offset_to = token.byte_end;
         self.token.position = token.position;
