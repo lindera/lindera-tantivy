@@ -30,7 +30,7 @@
 //! tantivy = "0.25"
 //! ```
 //!
-//! ```rust,no_run
+//! ```rust,ignore
 //! use tantivy::{
 //!     collector::TopDocs,
 //!     doc,
@@ -38,8 +38,9 @@
 //!     schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions},
 //!     Index,
 //! };
-//! use lindera::dictionary::DictionaryKind;
-//! use lindera::{dictionary::load_dictionary_from_kind, mode::Mode, segmenter::Segmenter};
+//! use lindera::dictionary::load_dictionary;
+//! use lindera::mode::Mode;
+//! use lindera::segmenter::Segmenter;
 //! use lindera_tantivy::tokenizer::LinderaTokenizer;
 //!
 //! # fn main() -> tantivy::Result<()> {
@@ -62,7 +63,7 @@
 //!
 //! // Create tokenizer with IPADIC
 //! let mode = Mode::Normal;
-//! let dictionary = load_dictionary_from_kind(DictionaryKind::IPADIC)?;
+//! let dictionary = load_dictionary("embedded://ipadic")?;
 //! let segmenter = Segmenter::new(mode, dictionary, None);
 //! let tokenizer = LinderaTokenizer::from_segmenter(segmenter);
 //!

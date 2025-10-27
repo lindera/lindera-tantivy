@@ -31,14 +31,15 @@ use crate::stream::LinderaTokenStream;
 ///
 /// ## Creating from a Segmenter
 ///
-/// ```rust,no_run
-/// use lindera::dictionary::DictionaryKind;
-/// use lindera::{dictionary::load_dictionary_from_kind, mode::Mode, segmenter::Segmenter};
+/// ```rust,ignore
+/// use lindera::dictionary::load_dictionary;
+/// use lindera::mode::Mode;
+/// use lindera::segmenter::Segmenter;
 /// use lindera_tantivy::tokenizer::LinderaTokenizer;
 ///
 /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
 /// let mode = Mode::Normal;
-/// let dictionary = load_dictionary_from_kind(DictionaryKind::IPADIC)?;
+/// let dictionary = load_dictionary("embedded://ipadic")?;
 /// let segmenter = Segmenter::new(mode, dictionary, None);
 /// let tokenizer = LinderaTokenizer::from_segmenter(segmenter);
 /// # Ok(())
@@ -153,15 +154,16 @@ impl LinderaTokenizer {
     ///
     /// # Examples
     ///
-    /// ```rust,no_run
-    /// use lindera::dictionary::DictionaryKind;
-    /// use lindera::{dictionary::load_dictionary_from_kind, mode::Mode, segmenter::Segmenter};
+    /// ```rust,ignore
+    /// use lindera::dictionary::load_dictionary;
+    /// use lindera::mode::Mode;
+    /// use lindera::segmenter::Segmenter;
     /// use lindera_tantivy::tokenizer::LinderaTokenizer;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// // Create a segmenter with IPADIC dictionary in Normal mode
     /// let mode = Mode::Normal;
-    /// let dictionary = load_dictionary_from_kind(DictionaryKind::IPADIC)?;
+    /// let dictionary = load_dictionary("embedded://ipadic")?;
     /// let user_dictionary = None;
     /// let segmenter = Segmenter::new(mode, dictionary, user_dictionary);
     ///
@@ -196,21 +198,22 @@ impl LinderaTokenizer {
     ///
     /// # Examples
     ///
-    /// ```rust,no_run
+    /// ```rust,ignore
     /// use lindera::character_filter::japanese_iteration_mark::JapaneseIterationMarkCharacterFilter;
-    /// use lindera::dictionary::DictionaryKind;
-    /// use lindera::{dictionary::load_dictionary_from_kind, mode::Mode, segmenter::Segmenter};
+    /// use lindera::dictionary::load_dictionary;
+    /// use lindera::mode::Mode;
+    /// use lindera::segmenter::Segmenter;
     /// use lindera_tantivy::tokenizer::LinderaTokenizer;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// let mode = Mode::Normal;
-    /// let dictionary = load_dictionary_from_kind(DictionaryKind::IPADIC)?;
+    /// let dictionary = load_dictionary("embedded://ipadic")?;
     /// let segmenter = Segmenter::new(mode, dictionary, None);
     /// let mut tokenizer = LinderaTokenizer::from_segmenter(segmenter);
     ///
     /// // Add a character filter
     /// let char_filter = JapaneseIterationMarkCharacterFilter::new(true, true);
-    /// tokenizer.append_character_filter(Box::new(char_filter));
+    /// tokenizer.append_character_filter(char_filter);
     /// # Ok(())
     /// # }
     /// ```
@@ -238,22 +241,25 @@ impl LinderaTokenizer {
     ///
     /// # Examples
     ///
-    /// ```rust,no_run
+    /// ```rust,ignore
+    /// use std::collections::HashSet;
     /// use lindera::token_filter::japanese_stop_tags::JapaneseStopTagsTokenFilter;
-    /// use lindera::dictionary::DictionaryKind;
-    /// use lindera::{dictionary::load_dictionary_from_kind, mode::Mode, segmenter::Segmenter};
+    /// use lindera::dictionary::load_dictionary;
+    /// use lindera::mode::Mode;
+    /// use lindera::segmenter::Segmenter;
     /// use lindera_tantivy::tokenizer::LinderaTokenizer;
     ///
     /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
     /// let mode = Mode::Normal;
-    /// let dictionary = load_dictionary_from_kind(DictionaryKind::IPADIC)?;
+    /// let dictionary = load_dictionary("embedded://ipadic")?;
     /// let segmenter = Segmenter::new(mode, dictionary, None);
     /// let mut tokenizer = LinderaTokenizer::from_segmenter(segmenter);
     ///
     /// // Add a token filter to remove specific part-of-speech tags
-    /// let tags = vec!["接続詞".to_string()];
+    /// let mut tags = HashSet::new();
+    /// tags.insert("接続詞".to_string());
     /// let token_filter = JapaneseStopTagsTokenFilter::new(tags);
-    /// tokenizer.append_token_filter(Box::new(token_filter));
+    /// tokenizer.append_token_filter(token_filter);
     /// # Ok(())
     /// # }
     /// ```
