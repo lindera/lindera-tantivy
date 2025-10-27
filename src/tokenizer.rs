@@ -1,3 +1,8 @@
+//! Lindera tokenizer implementation for Tantivy.
+//!
+//! This module provides the [`LinderaTokenizer`] struct, which implements Tantivy's
+//! [`Tokenizer`] trait using Lindera's morphological analysis capabilities.
+
 use std::path::Path;
 
 use tantivy::Result;
@@ -10,6 +15,48 @@ use lindera::tokenizer::{Tokenizer as LTokenizer, TokenizerBuilder};
 
 use crate::stream::LinderaTokenStream;
 
+/// A Tantivy tokenizer that uses Lindera for morphological analysis.
+///
+/// `LinderaTokenizer` wraps a Lindera tokenizer and provides an implementation of
+/// Tantivy's `Tokenizer` trait. It can be configured in multiple ways:
+///
+/// - From a Lindera `Segmenter` (programmatic configuration)
+/// - From a YAML configuration file
+/// - From the `LINDERA_CONFIG_PATH` environment variable
+///
+/// The tokenizer supports character filters and token filters to customize the
+/// tokenization process.
+///
+/// # Examples
+///
+/// ## Creating from a Segmenter
+///
+/// ```rust,no_run
+/// use lindera::dictionary::DictionaryKind;
+/// use lindera::{dictionary::load_dictionary_from_kind, mode::Mode, segmenter::Segmenter};
+/// use lindera_tantivy::tokenizer::LinderaTokenizer;
+///
+/// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+/// let mode = Mode::Normal;
+/// let dictionary = load_dictionary_from_kind(DictionaryKind::IPADIC)?;
+/// let segmenter = Segmenter::new(mode, dictionary, None);
+/// let tokenizer = LinderaTokenizer::from_segmenter(segmenter);
+/// # Ok(())
+/// # }
+/// ```
+///
+/// ## Creating from a configuration file
+///
+/// ```rust,no_run
+/// use std::path::Path;
+/// use lindera_tantivy::tokenizer::LinderaTokenizer;
+///
+/// # fn main() -> tantivy::Result<()> {
+/// let config_path = Path::new("lindera.yml");
+/// let tokenizer = LinderaTokenizer::from_file(config_path)?;
+/// # Ok(())
+/// # }
+/// ```
 #[derive(Clone)]
 pub struct LinderaTokenizer {
     tokenizer: LTokenizer,
@@ -17,8 +64,29 @@ pub struct LinderaTokenizer {
 }
 
 impl LinderaTokenizer {
-    /// Create a new `LinderaTokenizer`.
-    /// This function will create a new `LinderaTokenizer` with settings from the YAML file specified in the `LINDERA_CONFIG_PATH` environment variable.
+    /// Creates a new `LinderaTokenizer` from the `LINDERA_CONFIG_PATH` environment variable.
+    ///
+    /// This method reads the path to a YAML configuration file from the `LINDERA_CONFIG_PATH`
+    /// environment variable and constructs a tokenizer based on that configuration.
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if:
+    /// - The `LINDERA_CONFIG_PATH` environment variable is not set
+    /// - The configuration file cannot be read or parsed
+    /// - The configuration is invalid
+    ///
+    /// # Examples
+    ///
+    /// ```rust,no_run
+    /// use lindera_tantivy::tokenizer::LinderaTokenizer;
+    ///
+    /// # fn main() -> tantivy::Result<()> {
+    /// // Assumes LINDERA_CONFIG_PATH environment variable is set
+    /// let tokenizer = LinderaTokenizer::new()?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn new() -> Result<LinderaTokenizer> {
         let builder =
             TokenizerBuilder::new().map_err(|e| TantivyError::InvalidArgument(format!("{e:?}")))?;
@@ -31,8 +99,35 @@ impl LinderaTokenizer {
         })
     }
 
-    /// Create a new `LinderaTokenizer`.
-    /// This function will create a new `LinderaTokenizer` with settings from the YAML file.
+    /// Creates a new `LinderaTokenizer` from a YAML configuration file.
+    ///
+    /// This method constructs a tokenizer by reading configuration from the specified
+    /// YAML file path. The configuration file can specify the dictionary, mode,
+    /// character filters, and token filters to use.
+    ///
+    /// # Arguments
+    ///
+    /// * `file_path` - Path to the YAML configuration file
+    ///
+    /// # Errors
+    ///
+    /// Returns an error if:
+    /// - The file cannot be read
+    /// - The YAML is malformed
+    /// - The configuration is invalid
+    ///
+    /// # Examples
+    ///
+    /// ```rust,no_run
+    /// use std::path::Path;
+    /// use lindera_tantivy::tokenizer::LinderaTokenizer;
+    ///
+    /// # fn main() -> tantivy::Result<()> {
+    /// let config_path = Path::new("lindera.yml");
+    /// let tokenizer = LinderaTokenizer::from_file(config_path)?;
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn from_file(file_path: &Path) -> Result<LinderaTokenizer> {
         let builder = TokenizerBuilder::from_file(file_path)
             .map_err(|e| TantivyError::InvalidArgument(format!("{e:?}")))?;
@@ -45,8 +140,36 @@ impl LinderaTokenizer {
         })
     }
 
-    /// Create a new `LinderaTokenizer`.
-    /// This function will create a new `LinderaTokenizer` with the specified `lindera::segmenter::Segmenter`.
+    /// Creates a new `LinderaTokenizer` from a Lindera `Segmenter`.
+    ///
+    /// This method provides direct programmatic control over the tokenizer configuration
+    /// by accepting a pre-configured Lindera `Segmenter`. This is the most flexible way
+    /// to create a tokenizer as it allows you to specify the exact dictionary, mode,
+    /// and user dictionary to use.
+    ///
+    /// # Arguments
+    ///
+    /// * `segmenter` - A configured Lindera `Segmenter` instance
+    ///
+    /// # Examples
+    ///
+    /// ```rust,no_run
+    /// use lindera::dictionary::DictionaryKind;
+    /// use lindera::{dictionary::load_dictionary_from_kind, mode::Mode, segmenter::Segmenter};
+    /// use lindera_tantivy::tokenizer::LinderaTokenizer;
+    ///
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// // Create a segmenter with IPADIC dictionary in Normal mode
+    /// let mode = Mode::Normal;
+    /// let dictionary = load_dictionary_from_kind(DictionaryKind::IPADIC)?;
+    /// let user_dictionary = None;
+    /// let segmenter = Segmenter::new(mode, dictionary, user_dictionary);
+    ///
+    /// // Create the tokenizer
+    /// let tokenizer = LinderaTokenizer::from_segmenter(segmenter);
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn from_segmenter(segmenter: lindera::segmenter::Segmenter) -> LinderaTokenizer {
         LinderaTokenizer {
             tokenizer: LTokenizer::new(segmenter),
@@ -54,14 +177,86 @@ impl LinderaTokenizer {
         }
     }
 
-    /// Append a character filter to the tokenizer.
+    /// Appends a character filter to the tokenizer.
+    ///
+    /// Character filters transform the input text before tokenization. They can be used
+    /// for operations like Unicode normalization, mapping characters, or removing
+    /// specific characters.
+    ///
+    /// Multiple character filters can be chained by calling this method multiple times.
+    /// The filters will be applied in the order they were added.
+    ///
+    /// # Arguments
+    ///
+    /// * `character_filter` - The character filter to append
+    ///
+    /// # Returns
+    ///
+    /// Returns a mutable reference to self for method chaining.
+    ///
+    /// # Examples
+    ///
+    /// ```rust,no_run
+    /// use lindera::character_filter::japanese_iteration_mark::JapaneseIterationMarkCharacterFilter;
+    /// use lindera::dictionary::DictionaryKind;
+    /// use lindera::{dictionary::load_dictionary_from_kind, mode::Mode, segmenter::Segmenter};
+    /// use lindera_tantivy::tokenizer::LinderaTokenizer;
+    ///
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// let mode = Mode::Normal;
+    /// let dictionary = load_dictionary_from_kind(DictionaryKind::IPADIC)?;
+    /// let segmenter = Segmenter::new(mode, dictionary, None);
+    /// let mut tokenizer = LinderaTokenizer::from_segmenter(segmenter);
+    ///
+    /// // Add a character filter
+    /// let char_filter = JapaneseIterationMarkCharacterFilter::new(true, true);
+    /// tokenizer.append_character_filter(Box::new(char_filter));
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn append_character_filter(&mut self, character_filter: BoxCharacterFilter) -> &mut Self {
         self.tokenizer.append_character_filter(character_filter);
 
         self
     }
 
-    /// Append a token filter to the tokenizer.
+    /// Appends a token filter to the tokenizer.
+    ///
+    /// Token filters transform the tokens after tokenization. They can be used for
+    /// operations like lowercasing, removing stop words, or stemming.
+    ///
+    /// Multiple token filters can be chained by calling this method multiple times.
+    /// The filters will be applied in the order they were added.
+    ///
+    /// # Arguments
+    ///
+    /// * `token_filter` - The token filter to append
+    ///
+    /// # Returns
+    ///
+    /// Returns a mutable reference to self for method chaining.
+    ///
+    /// # Examples
+    ///
+    /// ```rust,no_run
+    /// use lindera::token_filter::japanese_stop_tags::JapaneseStopTagsTokenFilter;
+    /// use lindera::dictionary::DictionaryKind;
+    /// use lindera::{dictionary::load_dictionary_from_kind, mode::Mode, segmenter::Segmenter};
+    /// use lindera_tantivy::tokenizer::LinderaTokenizer;
+    ///
+    /// # fn main() -> Result<(), Box<dyn std::error::Error>> {
+    /// let mode = Mode::Normal;
+    /// let dictionary = load_dictionary_from_kind(DictionaryKind::IPADIC)?;
+    /// let segmenter = Segmenter::new(mode, dictionary, None);
+    /// let mut tokenizer = LinderaTokenizer::from_segmenter(segmenter);
+    ///
+    /// // Add a token filter to remove specific part-of-speech tags
+    /// let tags = vec!["接続詞".to_string()];
+    /// let token_filter = JapaneseStopTagsTokenFilter::new(tags);
+    /// tokenizer.append_token_filter(Box::new(token_filter));
+    /// # Ok(())
+    /// # }
+    /// ```
     pub fn append_token_filter(&mut self, token_filter: BoxTokenFilter) -> &mut Self {
         self.tokenizer.token_filters.push(token_filter);
 
