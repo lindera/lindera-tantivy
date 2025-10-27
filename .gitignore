@@ -6,3 +6,6 @@ target
 perf.data*
 
 Cargo.lock
+
+.serena/
+.mcp.json
