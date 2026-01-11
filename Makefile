@@ -18,7 +18,7 @@ test: ## Run tests
 	cargo test --all-features --all-targets
 
 bench: ## Run benchmarks
-	cargo bench --features=embedded-ipadic
+	cargo bench --features=embed-ipadic
 
 tag: ## Make a new tag for the current version
 	git tag v$(LINDERA_TANTIVY_VERSION)

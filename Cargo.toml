@@ -1,6 +1,6 @@
 [package]
 name = "lindera-tantivy"
-version = "1.2.1"
+version = "2.0.0"
 edition = "2024"
 description = "Lindera Tokenizer for Tantivy."
 documentation = "https://docs.rs/lindera-tantivy"
@@ -12,20 +12,20 @@ categories = ["text-processing"]
 license = "MIT"
 
 [features]
-embedded-ipadic = [
-    "lindera/embedded-ipadic",
+embed-ipadic = [
+    "lindera/embed-ipadic",
 ] # Include Japanese dictionary (IPADIC)
-embedded-ipadic-neologd = [
-    "lindera/embedded-ipadic-neologd",
+embed-ipadic-neologd = [
+    "lindera/embed-ipadic-neologd",
 ] # Include Japanese dictionary (IPADIC NEologd)
-embedded-unidic = [
-    "lindera/embedded-unidic",
+embed-unidic = [
+    "lindera/embed-unidic",
 ] # Include Japanese dictionary (UniDic)
-embedded-ko-dic = [
-    "lindera/embedded-ko-dic",
+embed-ko-dic = [
+    "lindera/embed-ko-dic",
 ] # Include Korean dictionary (ko-dic)
-embedded-cc-cedict = [
-    "lindera/embedded-cc-cedict",
+embed-cc-cedict = [
+    "lindera/embed-cc-cedict",
 ] # Include Chinese dictionary (CC-CEDICT)
 default = [] # No directories included
 
@@ -34,7 +34,7 @@ tantivy-tokenizer-api = "0.6.0"
 tantivy = "0.25.0"
 
 
-lindera = "1.5.1"
+lindera = "2.0.1"
 
 [dev-dependencies]
 criterion = { version = "0.8.1", features = ["html_reports"] }

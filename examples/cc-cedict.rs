@@ -1,4 +1,4 @@
-#[cfg(feature = "embedded-cc-cedict")]
+#[cfg(feature = "embed-cc-cedict")]
 fn main() -> tantivy::Result<()> {
     use tantivy::collector::TopDocs;
     use tantivy::query::QueryParser;
@@ -117,7 +117,7 @@ fn main() -> tantivy::Result<()> {
     Ok(())
 }
 
-#[cfg(not(feature = "embedded-cc-cedict"))]
+#[cfg(not(feature = "embed-cc-cedict"))]
 fn main() -> tantivy::Result<()> {
     Ok(())
 }

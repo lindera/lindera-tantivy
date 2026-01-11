@@ -1,4 +1,4 @@
-#[cfg(feature = "embedded-ko-dic")]
+#[cfg(feature = "embed-ko-dic")]
 fn main() -> tantivy::Result<()> {
     use tantivy::collector::TopDocs;
     use tantivy::query::QueryParser;
@@ -117,7 +117,7 @@ fn main() -> tantivy::Result<()> {
     Ok(())
 }
 
-#[cfg(not(feature = "embedded-ko-dic"))]
+#[cfg(not(feature = "embed-ko-dic"))]
 fn main() -> tantivy::Result<()> {
     Ok(())
 }

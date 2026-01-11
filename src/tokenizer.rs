@@ -286,10 +286,10 @@ impl Tokenizer for LinderaTokenizer {
 
 #[cfg(test)]
 #[cfg(any(
-    feature = "embedded-ipadic",
-    feature = "embedded-unidic",
-    feature = "embedded-ko-dic",
-    feature = "embedded-cc-cedict"
+    feature = "embed-ipadic",
+    feature = "embed-unidic",
+    feature = "embed-ko-dic",
+    feature = "embed-cc-cedict"
 ))]
 mod tests {
     use lindera::segmenter::Segmenter;
@@ -317,22 +317,22 @@ mod tests {
         tokens
     }
 
-    #[cfg(feature = "embedded-ipadic")]
+    #[cfg(feature = "embed-ipadic")]
     fn token_stream_helper_ipadic(text: &str) -> Vec<Token> {
         token_stream_helper(text, "embedded://ipadic")
     }
 
-    #[cfg(feature = "embedded-unidic")]
+    #[cfg(feature = "embed-unidic")]
     fn token_stream_helper_unidic(text: &str) -> Vec<Token> {
         token_stream_helper(text, "embedded://unidic")
     }
 
-    #[cfg(feature = "embedded-ko-dic")]
+    #[cfg(feature = "embed-ko-dic")]
     fn token_stream_helper_kodic(text: &str) -> Vec<Token> {
         token_stream_helper(text, "embedded://ko-dic")
     }
 
-    #[cfg(feature = "embedded-cc-cedict")]
+    #[cfg(feature = "embed-cc-cedict")]
     fn token_stream_helper_cccedict(text: &str) -> Vec<Token> {
         token_stream_helper(text, "embedded://cc-cedict")
     }
@@ -353,7 +353,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "embedded-ipadic")]
+    #[cfg(feature = "embed-ipadic")]
     fn test_tokenize_ipadic() {
         let tokens = token_stream_helper_ipadic("羽田空港限定トートバッグ");
         assert_eq!(tokens.len(), 3);
@@ -363,7 +363,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "embedded-unidic")]
+    #[cfg(feature = "embed-unidic")]
     fn test_tokenize_unidic() {
         let tokens = token_stream_helper_unidic("羽田空港限定トートバッグ");
         assert_eq!(tokens.len(), 5);
@@ -375,7 +375,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "embedded-ko-dic")]
+    #[cfg(feature = "embed-ko-dic")]
     fn test_tokenize_kodic() {
         let tokens = token_stream_helper_kodic("하네다공항한정토트백");
         assert_eq!(tokens.len(), 4);
@@ -386,7 +386,7 @@ mod tests {
     }
 
     #[test]
-    #[cfg(feature = "embedded-cc-cedict")]
+    #[cfg(feature = "embed-cc-cedict")]
     fn test_tokenize_cccedict() {
         let tokens = token_stream_helper_cccedict("羽田机场限量版手提包");
         assert_eq!(tokens.len(), 6);
