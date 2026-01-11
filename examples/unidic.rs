@@ -1,4 +1,4 @@
-#[cfg(feature = "embedded-unidic")]
+#[cfg(feature = "embed-unidic")]
 fn main() -> tantivy::Result<()> {
     use tantivy::collector::TopDocs;
     use tantivy::query::QueryParser;
@@ -117,7 +117,7 @@ fn main() -> tantivy::Result<()> {
     Ok(())
 }
 
-#[cfg(not(feature = "embedded-unidic"))]
+#[cfg(not(feature = "embed-unidic"))]
 fn main() -> tantivy::Result<()> {
     Ok(())
 }

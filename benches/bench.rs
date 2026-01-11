@@ -1,7 +1,7 @@
 use criterion::Criterion;
 use criterion::{criterion_group, criterion_main};
 
-#[cfg(feature = "embedded-ipadic")]
+#[cfg(feature = "embed-ipadic")]
 fn bench_indexing(c: &mut Criterion) {
     use tantivy::schema::{IndexRecordOption, Schema, TextFieldIndexing, TextOptions};
     use tantivy::{Index, doc};
@@ -82,7 +82,7 @@ fn bench_indexing(c: &mut Criterion) {
     group.finish();
 }
 
-#[cfg(not(feature = "embedded-ipadic"))]
+#[cfg(not(feature = "embed-ipadic"))]
 fn bench_indexing(_c: &mut Criterion) {}
 
 criterion_group!(benches, bench_indexing,);

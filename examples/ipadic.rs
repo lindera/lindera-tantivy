@@ -1,4 +1,4 @@
-#[cfg(feature = "embedded-ipadic")]
+#[cfg(feature = "embed-ipadic")]
 fn main() -> tantivy::Result<()> {
     use tantivy::collector::TopDocs;
     use tantivy::query::QueryParser;
@@ -117,7 +117,7 @@ fn main() -> tantivy::Result<()> {
     Ok(())
 }
 
-#[cfg(not(feature = "embedded-ipadic"))]
+#[cfg(not(feature = "embed-ipadic"))]
 fn main() -> tantivy::Result<()> {
     Ok(())
 }
