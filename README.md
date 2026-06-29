@@ -11,8 +11,8 @@ The following example enables IPADIC.
 
 ```toml
 [dependencies]
-lindera = "0.38"
-lindera-tantivy = { version = "0.38.0", features = ["ipadic"] }
+lindera = "4"
+lindera-tantivy = { version = "4.0", features = ["embed-ipadic"] }
 ```
 
 ### Basic example
