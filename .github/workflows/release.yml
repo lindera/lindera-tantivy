@@ -61,7 +61,7 @@ jobs:
           components: rustfmt, clippy
 
       - name: Run test
-        run: cargo test --target "${{ matrix.platform.target }}" --all-features ${{ matrix.platform.skip_test_run == true && '--no-run' || '' }}
+        run: cargo test --target "${{ matrix.platform.target }}" --features embed-ipadic ${{ matrix.platform.skip_test_run == true && '--no-run' || '' }}
 
   create-release:
     name: Upload artifact
