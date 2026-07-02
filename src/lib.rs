@@ -25,8 +25,8 @@
 //!
 //! ```toml
 //! [dependencies]
-//! lindera = "1.4"
-//! lindera-tantivy = { version = "1.1", features = ["embedded-ipadic"] }
+//! lindera = "4"
+//! lindera-tantivy = { version = "4.0", features = ["embed-ipadic"] }
 //! tantivy = "0.25"
 //! ```
 //!
