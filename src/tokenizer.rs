@@ -9,9 +9,9 @@ use tantivy::Result;
 use tantivy::TantivyError;
 use tantivy_tokenizer_api::{Token, Tokenizer};
 
-use lindera::character_filter::BoxCharacterFilter;
-use lindera::token_filter::BoxTokenFilter;
-use lindera::tokenizer::{Tokenizer as LTokenizer, TokenizerBuilder};
+use lindera_analysis::character_filter::BoxCharacterFilter;
+use lindera_analysis::token_filter::BoxTokenFilter;
+use lindera_analysis::tokenizer::{Tokenizer as LTokenizer, TokenizerBuilder};
 
 use crate::stream::LinderaTokenStream;
 
@@ -199,7 +199,7 @@ impl LinderaTokenizer {
     /// # Examples
     ///
     /// ```rust,ignore
-    /// use lindera::character_filter::japanese_iteration_mark::JapaneseIterationMarkCharacterFilter;
+    /// use lindera_analysis::character_filter::japanese_iteration_mark::JapaneseIterationMarkCharacterFilter;
     /// use lindera::dictionary::load_dictionary;
     /// use lindera::mode::Mode;
     /// use lindera::segmenter::Segmenter;
@@ -243,7 +243,7 @@ impl LinderaTokenizer {
     ///
     /// ```rust,ignore
     /// use std::collections::HashSet;
-    /// use lindera::token_filter::japanese_stop_tags::JapaneseStopTagsTokenFilter;
+    /// use lindera_analysis::token_filter::japanese_stop_tags::JapaneseStopTagsTokenFilter;
     /// use lindera::dictionary::load_dictionary;
     /// use lindera::mode::Mode;
     /// use lindera::segmenter::Segmenter;

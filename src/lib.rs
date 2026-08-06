@@ -25,9 +25,9 @@
 //!
 //! ```toml
 //! [dependencies]
-//! lindera = "4"
-//! lindera-tantivy = { version = "4.0", features = ["embed-ipadic"] }
-//! tantivy = "0.25"
+//! lindera = "5"
+//! lindera-tantivy = { version = "5.0", features = ["embed-ipadic"] }
+//! tantivy = "0.26"
 //! ```
 //!
 //! ```rust,ignore
@@ -80,7 +80,7 @@
 //! let searcher = reader.searcher();
 //! let query_parser = QueryParser::for_index(&index, vec![title]);
 //! let query = query_parser.parse_query("東京")?;
-//! let top_docs = searcher.search(&query, &TopDocs::with_limit(10))?;
+//! let top_docs = searcher.search(&query, &TopDocs::with_limit(10).order_by_score())?;
 //! # Ok(())
 //! # }
 //! ```
