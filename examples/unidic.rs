@@ -107,7 +107,7 @@ fn main() -> tantivy::Result<()> {
     println!("Query String: {query_str}");
 
     // search
-    let top_docs = searcher.search(&query, &TopDocs::with_limit(10))?;
+    let top_docs = searcher.search(&query, &TopDocs::with_limit(10).order_by_score())?;
     println!("Search Result:");
     for (_, doc_address) in top_docs {
         let retrieved_doc: TantivyDocument = searcher.doc(doc_address)?;
