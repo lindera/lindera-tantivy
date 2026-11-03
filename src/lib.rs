@@ -27,7 +27,7 @@
 //! [dependencies]
 //! lindera = "6.2.0"
 //! lindera-tantivy = { version = "6.2.0", features = ["embed-ipadic"] }
-//! tantivy = "0.26"
+//! tantivy = "0.27"
 //! ```
 //!
 //! ```rust,ignore
