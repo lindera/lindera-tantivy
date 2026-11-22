@@ -11,8 +11,8 @@ The following example enables IPADIC.
 
 ```toml
 [dependencies]
-lindera = "6.2.0"
-lindera-tantivy = { version = "6.2.0", features = ["embed-ipadic"] }
+lindera = "7.0.0"
+lindera-tantivy = { version = "7.0.0", features = ["embed-ipadic"] }
 ```
 
 ### Basic example
@@ -27,8 +27,7 @@ fn main() -> tantivy::Result<()> {
         Document, Index, TantivyDocument,
     };
 
-    use lindera::dictionary::DictionaryKind;
-    use lindera::{dictionary::load_dictionary_from_kind, mode::Mode, segmenter::Segmenter};
+    use lindera::{dictionary::load_dictionary, mode::Mode, segmenter::Segmenter};
     use lindera_tantivy::tokenizer::LinderaTokenizer;
 
     // create schema builder
@@ -78,7 +77,7 @@ fn main() -> tantivy::Result<()> {
 
     // Tokenizer with IPADIC
     let mode = Mode::Normal;
-    let dictionary = load_dictionary_from_kind(DictionaryKind::IPADIC).unwrap();
+    let dictionary = load_dictionary("embedded://ipadic").unwrap();
     let user_dictionary = None;
     let segmenter = Segmenter::new(mode, dictionary, user_dictionary);
     let tokenizer = LinderaTokenizer::from_segmenter(segmenter);
@@ -267,4 +266,4 @@ fn main() -> tantivy::Result<()> {
 
 The API reference is available. Please see following URL:
 
-- <a href="https://docs.rs/lindera-tantivy" target="_blank">lindera-tantivy</a>
+- [lindera-tantivy](https://docs.rs/lindera-tantivy)

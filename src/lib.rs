@@ -11,11 +11,11 @@
 //!
 //! This crate supports multiple embedded dictionaries through feature flags:
 //!
-//! - `embedded-ipadic` - Japanese dictionary (IPADIC)
-//! - `embedded-ipadic-neologd` - Japanese dictionary (IPADIC NEologd)
-//! - `embedded-unidic` - Japanese dictionary (UniDic)
-//! - `embedded-ko-dic` - Korean dictionary (ko-dic)
-//! - `embedded-cc-cedict` - Chinese dictionary (CC-CEDICT)
+//! - `embed-ipadic` - Japanese dictionary (IPADIC)
+//! - `embed-ipadic-neologd` - Japanese dictionary (IPADIC NEologd)
+//! - `embed-unidic` - Japanese dictionary (UniDic)
+//! - `embed-ko-dic` - Korean dictionary (ko-dic)
+//! - `embed-cc-cedict` - Chinese dictionary (CC-CEDICT)
 //!
 //! By default, no dictionaries are included to keep the binary size small.
 //!
@@ -25,8 +25,8 @@
 //!
 //! ```toml
 //! [dependencies]
-//! lindera = "6.2.0"
-//! lindera-tantivy = { version = "6.2.0", features = ["embed-ipadic"] }
+//! lindera = "7.0.0"
+//! lindera-tantivy = { version = "7.0.0", features = ["embed-ipadic"] }
 //! tantivy = "0.27"
 //! ```
 //!

@@ -9,9 +9,9 @@ use tantivy::Result;
 use tantivy::TantivyError;
 use tantivy_tokenizer_api::{Token, Tokenizer};
 
-use lindera_analysis::character_filter::BoxCharacterFilter;
-use lindera_analysis::token_filter::BoxTokenFilter;
-use lindera_analysis::tokenizer::{Tokenizer as LTokenizer, TokenizerBuilder};
+use lindera::analysis::character_filter::BoxCharacterFilter;
+use lindera::analysis::token_filter::BoxTokenFilter;
+use lindera::analysis::tokenizer::{Tokenizer as LTokenizer, TokenizerBuilder};
 
 use crate::stream::LinderaTokenStream;
 
@@ -22,7 +22,7 @@ use crate::stream::LinderaTokenStream;
 ///
 /// - From a Lindera `Segmenter` (programmatic configuration)
 /// - From a YAML configuration file
-/// - From the `LINDERA_CONFIG_PATH` environment variable
+/// - From the `LINDERA_CONFIG_FILE` environment variable
 ///
 /// The tokenizer supports character filters and token filters to customize the
 /// tokenization process.
@@ -65,15 +65,19 @@ pub struct LinderaTokenizer {
 }
 
 impl LinderaTokenizer {
-    /// Creates a new `LinderaTokenizer` from the `LINDERA_CONFIG_PATH` environment variable.
+    /// Creates a new `LinderaTokenizer` from the `LINDERA_CONFIG_FILE` environment variable.
     ///
-    /// This method reads the path to a YAML configuration file from the `LINDERA_CONFIG_PATH`
+    /// This method reads the path to a YAML configuration file from the `LINDERA_CONFIG_FILE`
     /// environment variable and constructs a tokenizer based on that configuration.
+    ///
+    /// When `LINDERA_CONFIG_FILE` is not set, Lindera reads the former name of the variable,
+    /// `LINDERA_CONFIG_PATH`, and writes a deprecation warning to standard error. Lindera
+    /// v8.0.0 will stop reading `LINDERA_CONFIG_PATH`.
     ///
     /// # Errors
     ///
     /// Returns an error if:
-    /// - The `LINDERA_CONFIG_PATH` environment variable is not set
+    /// - Neither `LINDERA_CONFIG_FILE` nor `LINDERA_CONFIG_PATH` is set
     /// - The configuration file cannot be read or parsed
     /// - The configuration is invalid
     ///
@@ -83,7 +87,7 @@ impl LinderaTokenizer {
     /// use lindera_tantivy::tokenizer::LinderaTokenizer;
     ///
     /// # fn main() -> tantivy::Result<()> {
-    /// // Assumes LINDERA_CONFIG_PATH environment variable is set
+    /// // Assumes LINDERA_CONFIG_FILE environment variable is set
     /// let tokenizer = LinderaTokenizer::new()?;
     /// # Ok(())
     /// # }
@@ -199,7 +203,7 @@ impl LinderaTokenizer {
     /// # Examples
     ///
     /// ```rust,ignore
-    /// use lindera_analysis::character_filter::japanese_iteration_mark::JapaneseIterationMarkCharacterFilter;
+    /// use lindera::analysis::character_filter::japanese_iteration_mark::JapaneseIterationMarkCharacterFilter;
     /// use lindera::dictionary::load_dictionary;
     /// use lindera::mode::Mode;
     /// use lindera::segmenter::Segmenter;
@@ -243,7 +247,7 @@ impl LinderaTokenizer {
     ///
     /// ```rust,ignore
     /// use std::collections::HashSet;
-    /// use lindera_analysis::token_filter::japanese_stop_tags::JapaneseStopTagsTokenFilter;
+    /// use lindera::analysis::token_filter::japanese_stop_tags::JapaneseStopTagsTokenFilter;
     /// use lindera::dictionary::load_dictionary;
     /// use lindera::mode::Mode;
     /// use lindera::segmenter::Segmenter;
